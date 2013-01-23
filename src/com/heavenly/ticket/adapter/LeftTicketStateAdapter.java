@@ -67,11 +67,12 @@ public class LeftTicketStateAdapter extends BaseAdapter {
 			holder.timeGetOn.setText(item.getTimeGetOn());
 			holder.timeGetOff.setText(item.getTimeGetOff());
 			holder.leftTicket.setText(item.getsSeatNumString());
-			if (item.isBookable()) {
-				holder.bookButton.setVisibility(View.VISIBLE);
-			} else {
-				holder.bookButton.setVisibility(View.INVISIBLE);
-			}
+//			if (item.isBookable()) {
+//				holder.bookButton.setVisibility(View.VISIBLE);
+//			} else {
+//				holder.bookButton.setVisibility(View.INVISIBLE);
+//			}
+			holder.bookButton.setVisibility(View.INVISIBLE);
 		}
 		return convertView;
 	}

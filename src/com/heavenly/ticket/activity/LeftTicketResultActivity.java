@@ -6,11 +6,15 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Menu;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.Toast;
 
 import com.heavenly.ticket.R;
 import com.heavenly.ticket.adapter.LeftTicketStateAdapter;
+import com.heavenly.ticket.model.LeftTicketState;
 import com.heavenly.ticket.transaction.BaseResponse;
 import com.heavenly.ticket.transaction.LeftTicketTransaction;
 import com.heavenly.ticket.transaction.LeftTicketTransaction.LeftTicketResponse;
@@ -58,12 +62,32 @@ public class LeftTicketResultActivity extends Activity {
 							LeftTicketResultActivity.this);
 					adapter.setData(result.data);
 					mTrainListView.setAdapter(adapter);
+					mTrainListView.setOnItemClickListener(onTicketClickListener);
 				} else {
 					Toast.makeText(LeftTicketResultActivity.this, "操作失败",
 							Toast.LENGTH_SHORT).show();
 				}
 			}
 		}.execute();
+	}
+	
+	private OnItemClickListener onTicketClickListener = new OnItemClickListener() {
+		@Override
+		public void onItemClick(AdapterView<?> parent, View view, int position,
+				long id) {
+			LeftTicketStateAdapter adapter = (LeftTicketStateAdapter) parent.getAdapter();
+			LeftTicketState item = adapter.getItem(position);
+			if (item.isBookable()) {
+				startOrderForm(item);
+			}
+		}
+	};
+	
+	private void startOrderForm(LeftTicketState ticketState) {
+		Intent intent = new Intent(this, OrderFormActivity.class);
+		intent.putExtras(getIntent());
+		intent.putExtra(getString(R.string.intent_key_left_ticket_state), ticketState);
+		startActivity(intent);
 	}
 	
 	@Override

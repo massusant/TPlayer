@@ -9,7 +9,8 @@
     <string name="intent_key_train_pass_type">trainPassType</string>
     <string name="intent_key_train_no">orderRequest.train_no</string>
     
-    
-    <string name="intent_key_left_ticket_list">intent_key_left_ticket</string>
+    <string name="intent_key_from_station_code_name">from_station_telecode_name</string>
+    <string name="intent_key_to_station_code_name">to_station_telecode_name</string>
+    <string name="intent_key_left_ticket_state">intent_key_left_ticket_state</string>
     
 </resources>

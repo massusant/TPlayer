@@ -4,7 +4,6 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
 
-import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONException;
 
 import android.app.Activity;
@@ -33,8 +32,6 @@ import com.heavenly.ticket.adapter.StationSuggestionListAdapter;
 import com.heavenly.ticket.adapter.TrainSelectorAdapter;
 import com.heavenly.ticket.model.Station;
 import com.heavenly.ticket.model.Train;
-import com.heavenly.ticket.transaction.LeftTicketTransaction;
-import com.heavenly.ticket.transaction.LeftTicketTransaction.LeftTicketResponse;
 import com.heavenly.ticket.transaction.TrainTransaction;
 import com.heavenly.ticket.transaction.TrainTransaction.QueryTrainParam;
 import com.heavenly.ticket.util.DateShowUtils;

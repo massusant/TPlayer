@@ -217,6 +217,7 @@ public class RpcHelper {
 			sHttpContext.get(HTTP_CONTEXT_ID_DEFAULT).put(
 					urlConnection.getURL().toURI(),
 					urlConnection.getHeaderFields());
+			Log.d(TAG, "" + urlConnection.getResponseMessage());
 		} catch (URISyntaxException e) {
 			e.printStackTrace();
 		}
@@ -334,18 +335,18 @@ public class RpcHelper {
 	private static void printDebug(String str) {
 		Log.d(TAG, str);
 	}
-
-	private static HashMap<String, CookieManager> sHttpContext;
 	
 	public static void init(Context context) {
 		sHttpContext = new HashMap<String, CookieManager>();
-		sHttpContext.put(HTTP_CONTEXT_ID_DEFAULT, new CookieManager(null, CookiePolicy.ACCEPT_ALL));
+		sHttpContext.put(HTTP_CONTEXT_ID_DEFAULT, new CookieManager(null,
+				CookiePolicy.ACCEPT_ALL));
 	}
 	
 	public static String getCookie(URL url, String id) {
 		if (sHttpContext == null) {
 			sHttpContext = new HashMap<String, CookieManager>();
-			sHttpContext.put(HTTP_CONTEXT_ID_DEFAULT, new CookieManager(null, CookiePolicy.ACCEPT_ALL));
+			sHttpContext.put(HTTP_CONTEXT_ID_DEFAULT, new CookieManager(null,
+					CookiePolicy.ACCEPT_ALL));
 			return "";
 		}
 		if (!sHttpContext.containsKey(id)) {
@@ -388,6 +389,7 @@ public class RpcHelper {
 	private static final int READ_TIME_OUT = 20000;
 	private static final int CONNECTION_TIME_OUT = 15000;
 	private static final int BUFFER_SIZE = 1024;
+	private static HashMap<String, CookieManager> sHttpContext;
 	// always verify the host - dont check for certificate
 	final static HostnameVerifier DO_NOT_VERIFY = new HostnameVerifier() {
 		public boolean verify(String hostname, SSLSession session) {

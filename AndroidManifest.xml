@@ -42,6 +42,9 @@
             android:name="com.heavenly.ticket.activity.LeftTicketResultActivity"
             android:label="@string/title_activity_query_left_ticket" >
         </activity>
+        <activity
+            android:name="com.heavenly.ticket.activity.OrderFormActivity"
+            android:label="@string/title_activity_query_left_ticket" />
     </application>
 
 </manifest>

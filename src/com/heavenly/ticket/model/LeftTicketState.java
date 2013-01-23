@@ -1,13 +1,16 @@
 package com.heavenly.ticket.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import android.text.Html;
 import android.text.TextUtils;
-import android.util.SparseIntArray;
 
-public class LeftTicketState {
-		
+import com.heavenly.ticket.util.SeatNumArray;
+
+public class LeftTicketState implements Serializable {
+	private static final long serialVersionUID = -4645520009114915491L;
+	
 	private String mStationGetOn;
 	private String mStationGetOff;
 	private boolean mTrainBeginStation;
@@ -28,11 +31,14 @@ public class LeftTicketState {
 	private String pMmStr;
 	private String pLocationCode;
 	
-	private SparseIntArray mSeatNumMap;
+	private SeatNumArray mSeatNumMap;
 	private String mSeatNumString;
 	
-	private static final String[] SEAT_NAME_STRING = { "商务座", "特等座", "一等座",
-			"二等座", "高级软卧", "软卧", "硬卧", "软座", "硬座", "无座", "其他", "" };
+	private static final String[] SEAT_NAME_ARRAY = { "商务座", "特等座", "一等座",
+		"二等座", "高级软卧", "软卧", "硬卧", "软座", "硬座", "无座", "其他", "length" };
+	
+	private static final String[] SEAT_CODE_ARRAY = { "9", "P", "M", "O", "6",
+			"4", "3", "2", "1", "-", "-" };
 	
 	public static enum Seat {
 		GSEAT_VIP, GSEAT_SPECIAL, GSEAT_FIRST, GSEAT_SECOND, 
@@ -40,7 +46,20 @@ public class LeftTicketState {
 		SEAT_SOFT, SEAT_HARD, NONE_SEAT, OTHERS, length;
 		
 		public String toString() {
-			return SEAT_NAME_STRING[this.ordinal()];
+			return SEAT_NAME_ARRAY[this.ordinal()];
+		}
+		
+		public String getCode() {
+			return SEAT_CODE_ARRAY[this.ordinal()];
+		}
+		
+		public static Seat createFromCode(String code) {
+			for (int i = 0; i < Seat.length.ordinal(); i++) {
+				if (SEAT_CODE_ARRAY[i].equalsIgnoreCase(code)) {
+					return Seat.values()[i];
+				}
+			}
+			return Seat.OTHERS;
 		}
 	}
 	
@@ -117,7 +136,7 @@ public class LeftTicketState {
 				+ Seat.length.ordinal()) {
 			return;
 		}
-		mSeatNumMap = new SparseIntArray();
+		mSeatNumMap = new SeatNumArray();
 		StringBuilder sb = new StringBuilder();
 		for (int i = OFFSET_LEFT_NUM; i < OFFSET_LEFT_NUM
 				+ Seat.length.ordinal(); i++) {
@@ -233,9 +252,6 @@ public class LeftTicketState {
 	}
 	public String getLocationCode() {
 		return pLocationCode;
-	}
-	public SparseIntArray getSeatNumMap() {
-		return mSeatNumMap;
 	}
 	public String getsSeatNumString() {
 		return mSeatNumString;
