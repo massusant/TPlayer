@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:id="@+id/station_area"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <AutoCompleteTextView
+            android:id="@+id/saddr_value"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:completionThreshold="1"
+            android:clickable="true"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:hint="起点"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="3"
+            android:gravity="center"
+            android:text="-" />
+
+        <AutoCompleteTextView
+            android:id="@+id/daddr_value"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/saddr_value"
+            android:layout_weight="2"
+            android:completionThreshold="1"
+            android:clickable="true"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:hint="终点"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/time_area"
+        android:layout_below="@+id/station_area"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <Button
+            android:id="@+id/date_value"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:onClick="onChangeDateClick" />
+
+        <TextView
+            android:id="@+id/time_label"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="3" />
+
+        <Button
+            android:id="@+id/time_value"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:onClick="onChangeTimeClick" />
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/train_type"
+        android:layout_below="@+id/time_area"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="动车 |Z字头 |T字头 |K字头 |其他 "
+        android:onClick="onChangeTypeClick" />
+    
+    <Button
+        android:id="@+id/query_train"
+        android:layout_below="@+id/train_type"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="查询"
+        android:onClick="onQueryTrainClick" />
+
+    <ListView
+        android:id="@+id/train_list"
+        android:layout_below="@+id/query_train"
+        android:layout_above="@+id/select_train"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+    
+    <Button
+        android:id="@+id/select_train"
+        android:text="获取余票"
+        android:onClick="onQueryLeftTicketClick"
+        android:layout_alignParentBottom="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+</RelativeLayout>

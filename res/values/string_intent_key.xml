@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="intent_key_from_station_code">orderRequest.from_station_telecode</string>
+    <string name="intent_key_to_station_code">orderRequest.to_station_telecode</string>
+    <string name="intent_key_departure_date">orderRequest.train_date</string>
+    <string name="intent_key_departure_time">orderRequest.start_time_str</string>
+    <string name="intent_key_include_student">includeStudent</string>
+    <string name="intent_key_train_class">trainClass</string>
+    <string name="intent_key_train_pass_type">trainPassType</string>
+    <string name="intent_key_train_no">orderRequest.train_no</string>
+    
+    
+    <string name="intent_key_left_ticket_list">intent_key_left_ticket</string>
+    
+</resources>
