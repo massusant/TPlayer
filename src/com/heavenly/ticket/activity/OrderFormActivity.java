@@ -6,9 +6,11 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.heavenly.ticket.R;
 import com.heavenly.ticket.model.LeftTicketState;
@@ -95,7 +97,30 @@ public class OrderFormActivity extends Activity {
 	}
 
 	public void onSubmitClick(View view) {
-		
+		final String code = mVerifyCodeText.getText().toString();
+		if (TextUtils.isEmpty(code)) {
+			Toast.makeText(this, "输入验证码", Toast.LENGTH_SHORT).show();
+			return;
+		}
+		new AsyncTask<Void, Void, Bitmap>() {
+			@Override
+			protected Bitmap doInBackground(Void... params) {
+				if (transaction == null) {
+					transaction = new OrderTicketTransaction();
+				}
+				transaction.setVerifyCode(code);
+				transaction.makeOrder();
+				return null;
+			}
+
+			@Override
+			protected void onPostExecute(Bitmap result) {
+				progress.dismiss();
+				if (result != null) {
+					mVerifyCodeImage.setImageBitmap(result);
+				}
+			}
+		}.execute();
 	}
 	
 	public void onBackClick(View view) {

@@ -11,6 +11,8 @@ import com.heavenly.ticket.util.SeatNumArray;
 public class LeftTicketState implements Serializable {
 	private static final long serialVersionUID = -4645520009114915491L;
 	
+	private static final int YP_SECTION_LENGTH = 10;
+	
 	private String mStationGetOn;
 	private String mStationGetOff;
 	private boolean mTrainBeginStation;
@@ -33,36 +35,6 @@ public class LeftTicketState implements Serializable {
 	
 	private SeatNumArray mSeatNumMap;
 	private String mSeatNumString;
-	
-	private static final String[] SEAT_NAME_ARRAY = { "商务座", "特等座", "一等座",
-		"二等座", "高级软卧", "软卧", "硬卧", "软座", "硬座", "无座", "其他", "length" };
-	
-	private static final String[] SEAT_CODE_ARRAY = { "9", "P", "M", "O", "6",
-			"4", "3", "2", "1", "-", "-" };
-	
-	public static enum Seat {
-		GSEAT_VIP, GSEAT_SPECIAL, GSEAT_FIRST, GSEAT_SECOND, 
-		SLEEPER_VIP, SLEEPER_SOFT, SLEEPER_HARD, 
-		SEAT_SOFT, SEAT_HARD, NONE_SEAT, OTHERS, length;
-		
-		public String toString() {
-			return SEAT_NAME_ARRAY[this.ordinal()];
-		}
-		
-		public String getCode() {
-			return SEAT_CODE_ARRAY[this.ordinal()];
-		}
-		
-		public static Seat createFromCode(String code) {
-			for (int i = 0; i < Seat.length.ordinal(); i++) {
-				if (SEAT_CODE_ARRAY[i].equalsIgnoreCase(code)) {
-					return Seat.values()[i];
-				}
-			}
-			return Seat.OTHERS;
-		}
-	}
-	
 	
 	public int getLeftNumBySeat(Seat seat) {
 		if (mSeatNumMap == null) {
@@ -98,7 +70,7 @@ public class LeftTicketState implements Serializable {
 		LeftTicketState state = new LeftTicketState();
 		state.mTrainNoShow = info[1];
 		state.mTripTimeLast = info[4];
-		state.parseLeftSeatNum(info);
+//		state.parseLeftSeatNum(info);
 		
 		String[] stationInfo = detail[2].split("<br>");
 		state.mTrainBeginStation = stationInfo[0].startsWith("<img ");
@@ -120,8 +92,9 @@ public class LeftTicketState implements Serializable {
 			state.mStationGetOff = stationInfo[0];
 		}
 		
+		state.mBookable = state.parseOrderParams(detail[16]);
 		if (state.mBookable) {
-			state.parseOrderParams(detail[16]);
+			state.parseLeftSeatNum(state.pYpInfoDetail);
 		}
 		return state;
 	}
@@ -177,10 +150,10 @@ public class LeftTicketState implements Serializable {
 		}
 	}
 	
-	private void parseOrderParams(String actionStr) throws Exception {
+	private boolean parseOrderParams(String actionStr) throws Exception {
 		String[] values = actionStr.split("'");
 		if (values == null || values.length < 8) {
-			throw new Exception("parse ticket info exception");
+			return false;
 		}
 		values = values[7].split("#");
 		if (values == null || values.length < 14) {
@@ -195,6 +168,38 @@ public class LeftTicketState implements Serializable {
 		pYpInfoDetail = values[11];
 		pMmStr = values[12];
 		pLocationCode = values[13];
+		return true;
+	}
+	
+	private void parseLeftSeatNum(String ypInfo) {
+		if (TextUtils.isEmpty(ypInfo)) {
+			return;
+		}
+		StringBuilder sb = new StringBuilder();
+		mSeatNumMap = new SeatNumArray();
+		try {
+			for (int i = 0; i < ypInfo.length(); i += 10) {
+				String data = ypInfo.substring(i, i + YP_SECTION_LENGTH);
+				String typeCode = data.substring(0, 1);
+				String num = data.substring(6);
+				Seat seat = Seat.createFromCode(typeCode);
+				int left = Integer.parseInt(num);
+				if (left >= 3000) {
+					seat = Seat.SEAT_NONE;
+					left -= 3000;
+				}
+				mSeatNumMap.put(seat.ordinal(), left);
+				sb.append(seat.toString()).append(":").append(left).append("|");
+			}
+		} catch (NumberFormatException e) {
+			e.printStackTrace();
+		}
+		if (sb.length() > 0) {
+			sb.deleteCharAt(sb.length() - 1);
+			mSeatNumString = sb.toString();
+		} else {
+			mSeatNumString = "无票";
+		}
 	}
 	
 	@Override

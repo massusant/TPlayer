@@ -1,0 +1,116 @@
+orderRequest.train_date=2013-02-01, 
+orderRequest.train_no=570000L71004, 
+orderRequest.station_train_code=L710,
+ orderRequest.from_station_telecode=XHH, 
+orderRequest.to_station_telecode=SNH, 
+orderRequest.seat_type_code=1, 
+orderRequest.ticket_type_order_num=, 
+orderRequest.bed_level_order_num=000000000000000000000000000000, 
+orderRequest.start_time=00:26, 
+orderRequest.end_time=02:47, 
+orderRequest.from_station_name=杭州南, 
+orderRequest.to_station_name=上海南, 
+orderRequest.cancel_flag=1, 
+orderRequest.id_mode=Y, 
+orderRequest.reserve_flag=A, 
+checkbox0=0, 
+passengerTickets=1,1,1,文雪龙,1,610481198805240037,13646815023,Y, 
+oldPassengers=文雪龙,1,610481198805240037, 
+passenger_1_seat=1, 
+passenger_1_ticket=1, 
+passenger_1_name=文雪龙, 
+passenger_1_cardtype=1, 
+passenger_1_cardno=610481198805240037, 
+passenger_1_mobileno=13646815023, 
+checkbox9=Y, 
+oldPassengers=, 
+checkbox9=Y, 
+oldPassengers=, 
+checkbox9=Y, 
+oldPassengers=, 
+checkbox9=Y, 
+oldPassengers=, 
+org.apache.struts.taglib.html.TOKEN=3f840806a296e3c4176b50e831bd5e14, 
+leftTicketStr=1*****30681*****0120, 
+textfield=中文或拼音首字母, 
+randCode=tmmg
+
+
+
+
+Request URL:https://dynamic.12306.cn/otsweb/order/confirmPassengerAction.do?method=payOrder&orderSequence_no=E455713822
+Request Method:POST
+Status Code:200 OK
+Request Headersview source
+Accept:text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+Accept-Charset:GBK,utf-8;q=0.7,*;q=0.3
+Accept-Encoding:gzip,deflate,sdch
+Accept-Language:zh-CN,zh;q=0.8,en-US;q=0.6,en;q=0.4
+Cache-Control:max-age=0
+Connection:keep-alive
+Content-Length:1246
+Content-Type:application/x-www-form-urlencoded
+Cookie:JSESSIONID=E48023039FFA1E513DDC0CE155A6BBF7; BIGipServerotsweb=2161377546.22560.0000
+Host:dynamic.12306.cn
+Origin:https://dynamic.12306.cn
+Referer:https://dynamic.12306.cn/otsweb/order/confirmPassengerAction.do?method=init
+User-Agent:Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.17 (KHTML, like Gecko) Chrome/24.0.1312.52 Safari/537.17
+Query String Parametersview sourceview URL encoded
+
+method:payOrder
+orderSequence_no:E455713822
+
+Form Dataview sourceview URL encoded
+
+org.apache.struts.taglib.html.TOKEN:acd1c3da26487e789c691ae0ec2f2507
+leftTicketStr:10025530681002550121
+textfield:中文或拼音首字母
+checkbox0:0
+orderRequest.train_date:2013-02-01
+orderRequest.train_no:570000L71004
+orderRequest.station_train_code:L710
+orderRequest.from_station_telecode:XHH
+orderRequest.to_station_telecode:SNH
+orderRequest.seat_type_code:
+orderRequest.ticket_type_order_num:
+orderRequest.bed_level_order_num:000000000000000000000000000000
+orderRequest.start_time:00:26
+orderRequest.end_time:02:47
+orderRequest.from_station_name:杭州南
+orderRequest.to_station_name:上海南
+orderRequest.cancel_flag:1
+orderRequest.id_mode:Y
+passengerTickets:1,0,1,XX龙,1,6104811988********,13646xxxx23,Y
+oldPassengers:XX龙,1,6104811988********
+passenger_1_seat:1
+passenger_1_ticket:1
+passenger_1_name:XX龙
+passenger_1_cardtype:1
+passenger_1_cardno:6104811988********
+passenger_1_mobileno:13646xxxx23
+checkbox9:Y
+oldPassengers:
+checkbox9:Y
+oldPassengers:
+checkbox9:Y
+oldPassengers:
+checkbox9:Y
+oldPassengers:
+checkbox9:Y
+randCode:g6xb
+orderRequest.reserve_flag:A
+
+Response Headersview source
+Cache-Control:no-cache
+Connection:keep-alive
+Content-Encoding:gzip
+Content-Language:zh-CN
+Content-Type:text/html;charset=UTF-8
+Date:Wed, 23 Jan 2013 14:13:11 GMT
+Expires:Wed, 31 Dec 1969 23:59:59 GMT
+Pragma:no-cache
+Server:Apache-Coyote/1.1
+Transfer-Encoding:chunked
+X-Cache:MISS from cache.51cdn.com
+X-Powered-By:Servlet 2.5; JBoss-5.0/JBossWeb-2.1
+X-Via:1.1 zjyy158:8361 (Cdn Cache Server V2.0)
