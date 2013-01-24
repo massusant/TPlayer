@@ -18,7 +18,6 @@ import com.heavenly.ticket.transaction.OrderTicketTransaction;
 
 public class OrderFormActivity extends Activity {
 
-	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -30,26 +29,27 @@ public class OrderFormActivity extends Activity {
 		initViews(intent);
 		initData(intent);
 	}
-	
+
 	private void initViews(Intent intent) {
 		mVerifyCodeText = (EditText) findViewById(R.id.verify_code_value);
 		mVerifyCodeImage = (ImageView) findViewById(R.id.verify_code_image);
 	}
-	
+
 	private void initData(Intent intent) {
 		ticketState = (LeftTicketState) intent
 				.getSerializableExtra(getString(R.string.intent_key_left_ticket_state));
 		travelDate = intent
 				.getStringExtra(getString(R.string.intent_key_departure_date));
-		
+
 		initToken();
 	}
-	
+
 	private void initToken() {
 		if (progress == null) {
 			progress = ProgressDialog.show(this, "", "loading...", true);
+		} else {
+			progress.show();
 		}
-		progress.show();
 		new AsyncTask<Void, Void, Bitmap>() {
 			@Override
 			protected Bitmap doInBackground(Void... params) {
@@ -72,18 +72,21 @@ public class OrderFormActivity extends Activity {
 			}
 		}.execute();
 	}
-	
+
 	public void onVerifyCodeImageClick(View view) {
+		if (progress == null) {
+			progress = ProgressDialog.show(this, "", "loading...", true);
+		} else {
+			progress.show();
+		}
+		mVerifyCodeText.setText("");
 		new AsyncTask<Void, Void, Bitmap>() {
 			@Override
 			protected Bitmap doInBackground(Void... params) {
 				if (transaction == null) {
 					transaction = new OrderTicketTransaction();
 				}
-				if (transaction.obtainToken() != null) {
-					return transaction.refreshVerifyBitmap();
-				}
-				return null;
+				return transaction.refreshVerifyBitmap();
 			}
 
 			@Override
@@ -101,6 +104,11 @@ public class OrderFormActivity extends Activity {
 		if (TextUtils.isEmpty(code)) {
 			Toast.makeText(this, "输入验证码", Toast.LENGTH_SHORT).show();
 			return;
+		}
+		if (progress == null) {
+			progress = ProgressDialog.show(this, "", "loading...", true);
+		} else {
+			progress.show();
 		}
 		new AsyncTask<Void, Void, Bitmap>() {
 			@Override
@@ -121,10 +129,6 @@ public class OrderFormActivity extends Activity {
 				}
 			}
 		}.execute();
-	}
-	
-	public void onBackClick(View view) {
-		
 	}
 
 	private OrderTicketTransaction transaction;

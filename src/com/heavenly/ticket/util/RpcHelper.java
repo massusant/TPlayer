@@ -174,6 +174,7 @@ public class RpcHelper {
 		}
 		urlConnection.setConnectTimeout(CONNECTION_TIME_OUT);
 		urlConnection.setReadTimeout(READ_TIME_OUT);
+//		urlConnection.setInstanceFollowRedirects(sFollowRedirect);
 		return urlConnection;
 	}
 	
@@ -201,7 +202,7 @@ public class RpcHelper {
 		HttpURLConnection urlConnection = makeURLPostConnection(rpcUrl, header, null);
 		urlConnection.setRequestProperty("Cookie",
 				getCookie(urlConnection.getURL(), HTTP_CONTEXT_ID_DEFAULT));
-		urlConnection.connect();
+//		urlConnection.connect();
 		OutputStream os = urlConnection.getOutputStream();
 		if (paramList != null && !paramList.isEmpty()) {
 			os.write(createParamsString(paramList).getBytes("UTF-8"));
@@ -324,6 +325,7 @@ public class RpcHelper {
 			}
 		}
 		sb.deleteCharAt(sb.length() - 1);
+//		Log.d(TAG, "param >> " + sb);
 		return sb.toString();
 	}
 
@@ -363,6 +365,7 @@ public class RpcHelper {
 			for (int i = 0; i < list.size(); i++) {
 				sb.append(list.get(i)).append("; ");
 			}
+			Log.d(TAG, "Cookie: " + sb);
 			return sb.toString().trim();
 		} catch (URISyntaxException e) {
 			e.printStackTrace();
@@ -382,9 +385,14 @@ public class RpcHelper {
 		sHttpContext.remove(id);
 	}
 	
+	public static void setFollowRedirect(boolean follow) {
+		sFollowRedirect = follow;
+	}
+	
 	private static final String HTTP_CONTEXT_ID_DEFAULT = "http.context.default";
 	
 //	@SuppressWarnings("unused")
+	private static boolean sFollowRedirect = true;
 	private static final String TAG = "RpcHelper";
 	private static final int READ_TIME_OUT = 20000;
 	private static final int CONNECTION_TIME_OUT = 15000;

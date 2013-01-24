@@ -26,13 +26,16 @@ public class OrderTicketTransaction extends BaseTransaction {
 	private static final String URL_QUERY_TOKEN = "https://dynamic.12306.cn/otsweb/order/querySingleAction.do?method=submutOrderRequest";
 	private static final String URL_VERIFY_CODE = "https://dynamic.12306.cn/otsweb/passCodeAction.do?rand=randp";
 	//private static final String URL_CONFIRM_PASSENGER = "https://dynamic.12306.cn/otsweb/order/confirmPassengerAction.do?method=init";
+	private static final String URL_ORDER_QUENE = "https://dynamic.12306.cn/otsweb/order/confirmPassengerAction.do";
 	private static final String URL_ORDER_CHECK = "https://dynamic.12306.cn/otsweb/order/confirmPassengerAction.do?method=checkOrderInfo&rand=";
-	private static final String URL_ORDER_SUBMIT = "https://dynamic.12306.cn/otsweb/order/confirmPassengerAction.do?method=confirmSingleForQueueOrder";
+	private static final String URL_ORDER_SUBMIT = "https://dynamic.12306.cn/otsweb/order/confirmPassengerAction.do?method=confirmSingleForQueue";
 	
 	private LeftTicketState mTicketState;
 	private String mTravelDate;
 	private String mVerifyCode;
 	private String mToken;
+	private String mTicket;
+	private String mathRandom;
 	
 	public void setTicketInfo(LeftTicketState ticketState, String date) {
 		mTicketState = ticketState;
@@ -51,40 +54,46 @@ public class OrderTicketTransaction extends BaseTransaction {
 	public String obtainToken() {
 		String ret = RpcHelper.doInvokeRpcByPost(URL_QUERY_TOKEN, obtainRequestHeader(), getParamForToken());
 		mToken = getTOKEN(ret);
+		mTicket = getTicket(ret);
 		Log.d(TAG, "org.apache.struts.taglib.html.TOKEN=" + mToken);
 		return mToken;
 	}
 	
 	public Bitmap refreshVerifyBitmap() {
-		return BitmapUtils.getFromURL(URL_VERIFY_CODE, null);
+		mathRandom = String.valueOf(Math.random());
+		Map<String, String> header = super.obtainRequestHeader();
+		header.put("Accept", "*/*");
+		header.put("Referer",
+				"https://dynamic.12306.cn/otsweb/order/confirmPassengerAction.do?method=init");
+		
+		return BitmapUtils.getFromURL(URL_VERIFY_CODE + "&" + mathRandom, header, null);
 	}
 
+	boolean checked = false;
 	public String makeOrder() {
-		String url = URL_ORDER_CHECK + mVerifyCode;
-		String ret = RpcHelper.doInvokeRpcByPost(url, obtainOrderCheckHeader(), getParamForOrder());
+		List<NameValuePair> param = null;
 		try {
+			param = getParamForOrder();
+			param.add(new BasicNameValuePair("tFlag", "dc"));
+			String url = URL_ORDER_CHECK + mVerifyCode;
+			RpcHelper.setFollowRedirect(false);
+			String ret = RpcHelper.doInvokeRpcByPost(url,
+					obtainOrderCheckHeader(), param);
 			JSONObject json = new JSONObject(ret);
 			// {"checkHuimd":"Y","check608":"Y","msg":"","errMsg":"Y"}
 			if (!"Y".equals(json.getString("errMsg"))
 					|| !"Y".equals(json.get("checkHuimd"))
-							|| !"Y".equals(json.get("check608"))) {
+					|| !"Y".equals(json.get("check608"))) {
 				return null;
 			}
-			ret = RpcHelper.doInvokeRpcByPost(URL_ORDER_SUBMIT, obtainOrderCheckHeader(), getParamForOrder());
-			Log.d(TAG, "\n\n=====================================================");
-			for (int i = 0; i < ret.length(); i += 2000) {
-				if (ret.length() >= i + 2000) {
-					Log.d(TAG, ret.substring(i, i + 2000));
-				} else {
-					Log.d(TAG, ret.substring(i, ret.length()));
-				}
-			}
+//			ret = RpcHelper.doInvokeRpc(URL_ORDER_QUENE, obtainOrderCheckHeader(), getQueneCountParams());
+			param = getParamForOrder();
+			String result = RpcHelper.doInvokeRpcByPost(URL_ORDER_SUBMIT + "&rand=" + mVerifyCode, obtainOrderCheckHeader(), param);
+			return result;
 		} catch (JSONException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		return ret;
+		return null;
 	}
 	
 	@Override
@@ -99,31 +108,60 @@ public class OrderTicketTransaction extends BaseTransaction {
 	
 	protected HashMap<String, String> obtainOrderCheckHeader() {
 		HashMap<String, String> header = super.obtainRequestHeader();
-		header.put("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
+		header.put("Accept", "application/json,text/javascript,*/*");
 		header.put("Referer",
 				"https://dynamic.12306.cn/otsweb/order/confirmPassengerAction.do?method=init");
 		return header;
 	}
 
-	private static String getTOKEN(String body){
-		Matcher m = Pattern.compile("org.apache.struts.taglib.html.TOKEN[\\w\\W]*</div>").matcher(body);
+	private String getTOKEN(String body){
+		String[] text = matcher(body,
+				"org.apache.struts.taglib.html.TOKEN[\\w\\W]*</div>");
+		if (text != null && text.length > 0) {
+			return text[0].split("value=\"")[1].split("\"><")[0];
+		}
+		return null;
+	}
+	
+	private String getTicket(String body) {
+		String[] text = matcher(body,
+				"left_ticket[\\w\\W]*/>");
+		if (text != null && text.length > 0) {
+			return text[0].split("value=\"")[1].split("\"")[0];
+		}
+		return null;
+	}
+	
+	private String[] matcher(String body, String pattern) {
+		Matcher m = Pattern.compile(pattern).matcher(body);
 		while (m.find()) {
 			int n = m.groupCount();
 			String[] ss = new String[n + 1];
 			for (int i = 0; i <= n; i++) {
 				ss[i] = m.group(i);
 			}
-			return ss[0].split("value=\"")[1].split("\"><")[0];
+			return ss;
 		}
 		return null;
 	}
-	
-	
 
 	@Override
 	public List<NameValuePair> getParamList() {
 		
 		return null;
+	}
+	
+	private List<NameValuePair> getQueneCountParams() {
+		ArrayList<NameValuePair> param = new ArrayList<NameValuePair>();
+		param.add(new BasicNameValuePair("method", "getQueueCount"));
+		param.add(new BasicNameValuePair("train_date", mTravelDate));
+		param.add(new BasicNameValuePair("train_no", mTicketState.getTrainNo4()));
+		param.add(new BasicNameValuePair("station", mTicketState.getTrainNoShow()));
+		param.add(new BasicNameValuePair("seat", Seat.SEAT_HARD.getCode()));
+		param.add(new BasicNameValuePair("from", mTicketState.getFromStationCode()));
+		param.add(new BasicNameValuePair("to", mTicketState.getToStationCode()));
+		param.add(new BasicNameValuePair("ticket", mTicket));
+		return param;
 	}
 	
 //		station_train_code:D378
@@ -183,8 +221,11 @@ public class OrderTicketTransaction extends BaseTransaction {
 	
 	private List<NameValuePair> getParamForOrder() {
 		ArrayList<NameValuePair> param = new ArrayList<NameValuePair>();
-		param.addAll(getOrderParams(mTicketState));
+		param.add(new BasicNameValuePair("org.apache.struts.taglib.html.TOKEN", mToken)); // token
+		param.add(new BasicNameValuePair("leftTicketStr", mTicket ));  // 余票信息
+		param.add(new BasicNameValuePair("textfield", "中文或拼音首字母"));
 		param.add(new BasicNameValuePair("checkbox0", "0"));
+		param.addAll(getOrderParams(mTicketState));
 //		for(int x=0; x< 5  ;x++){ // 最大支持5人
 			int index = 0;
 			int no = index +1;
@@ -194,22 +235,21 @@ public class OrderTicketTransaction extends BaseTransaction {
 					"1"+","+"文雪龙"+",1,"+"610481198805240037"+","+"13646815023"+",Y"));
 			param.add(new BasicNameValuePair("oldPassengers","文雪龙"+",1,"+"610481198805240037"));
 			param.add(new BasicNameValuePair(passenger+"seat", Seat.SEAT_HARD.getCode()));/*1--硬座,3--硬卧,4--软卧*///硬卧
-//			param.add(new BasicNameValuePair(passenger+"seat_detail", ""));/*0-随机,3-上铺,2-中铺,1--下铺*///下铺
-//			param.add(new BasicNameValuePair(passenger+"seat_detail_select", "1"));/*0-随机,3-上铺,2-中铺,1--下铺*///下铺
 			param.add(new BasicNameValuePair(passenger+"ticket", "1"));//成人票  /* 1-成人 2-儿童 3-学生 4-残军*/
 			param.add(new BasicNameValuePair(passenger+"name", "文雪龙"));//姓名
 			param.add(new BasicNameValuePair(passenger+"cardtype", "1"));/*二代身份证*///证件类型
 			param.add(new BasicNameValuePair(passenger+"cardno", "610481198805240037"));//证件号码
 			param.add(new BasicNameValuePair(passenger+"mobileno", "13646815023"));//手机号
+//			param.add(new BasicNameValuePair(passenger+"seat_detail", ""));/*0-随机,3-上铺,2-中铺,1--下铺*///下铺
+//			param.add(new BasicNameValuePair(passenger+"seat_detail_select", "1"));/*0-随机,3-上铺,2-中铺,1--下铺*///下铺
 			// paras+=JavaUtils.toPostParam(submitOrderParams)+"&";
+			param.add(new BasicNameValuePair("checkbox9", "Y"));
 //		}
 		for (int i = 0; i < 4; i++) {
-			param.add(new BasicNameValuePair("checkbox9", "Y"));
 			param.add(new BasicNameValuePair("oldPassengers", ""));
+			param.add(new BasicNameValuePair("checkbox9", "Y"));
 		}
-		param.add(new BasicNameValuePair("org.apache.struts.taglib.html.TOKEN",mToken)); // token
-		param.add(new BasicNameValuePair("leftTicketStr", mTicketState.getYpInfoDetail() ));  // 余票信息
-		param.add(new BasicNameValuePair("textfield","中文或拼音首字母"));
+		param.add(new BasicNameValuePair("orderRequest.reserve_flag", "A"));//支付方式
 		param.add(new BasicNameValuePair("randCode", mVerifyCode));
 		return param;
 	}
@@ -221,7 +261,7 @@ public class OrderTicketTransaction extends BaseTransaction {
 		param.add(new BasicNameValuePair("orderRequest.station_train_code", ticketState.getTrainNoShow()));
 		param.add(new BasicNameValuePair("orderRequest.from_station_telecode",ticketState.getFromStationCode()));
 		param.add(new BasicNameValuePair("orderRequest.to_station_telecode", ticketState.getToStationCode()));
-		param.add(new BasicNameValuePair("orderRequest.seat_type_code",Seat.SEAT_HARD.getCode()));
+		param.add(new BasicNameValuePair("orderRequest.seat_type_code", "")); // XXX 更改为空字符串
 //		param.add(new BasicNameValuePair("orderRequest.seat_detail_type_code",""));
 		param.add(new BasicNameValuePair("orderRequest.ticket_type_order_num",""));
 		param.add(new BasicNameValuePair("orderRequest.bed_level_order_num","000000000000000000000000000000"));
@@ -231,51 +271,9 @@ public class OrderTicketTransaction extends BaseTransaction {
 		param.add(new BasicNameValuePair("orderRequest.to_station_name", ticketState.getStationGetOff()));
 		param.add(new BasicNameValuePair("orderRequest.cancel_flag","1"));
 		param.add(new BasicNameValuePair("orderRequest.id_mode","Y"));
-		param.add(new BasicNameValuePair("orderRequest.reserve_flag", "A"));//支付方式
 //		param.add(new BasicNameValuePair("oldPassengers", ""));
 //		param.add(new BasicNameValuePair("checkbox9", "Y"));
 		return param;
 	}
-	
-	private static String checkLocation(String httpBody) {
-		String locationUrl = null;
-		// 2.
-		String bodyLocationStr = "";
-		if (httpBody.length() > 5120) {
-			bodyLocationStr = httpBody.substring(0, 5120);// 太长则截取部分内容
-		} else {
-			bodyLocationStr = httpBody;
-		}
-		bodyLocationStr = bodyLocationStr.replaceAll("<!--(?s).*?-->", "")
-				.replaceAll("['\"]", "");// 去除注释和引号部分
 
-		int metaLocation = -1;
-		metaLocation = bodyLocationStr.toLowerCase().indexOf(
-				"http-equiv=refresh");
-		if (metaLocation != -1) {
-			String locationPart = bodyLocationStr.substring(metaLocation,
-					bodyLocationStr.indexOf(">", metaLocation));
-			metaLocation = locationPart.toLowerCase().indexOf("url");
-			if (metaLocation != -1) {
-				// 假定url=...是在 > 之前最后的部分
-				locationUrl = locationPart.substring(metaLocation + 4,
-						locationPart.length()).replaceAll("\\s+[^>]*", "");
-				return locationUrl;
-			}
-		}
-		// 3.
-		Matcher locationMath = Pattern
-				.compile(
-						"(?s)<script.{0,50}?>\\s*((document)|(window)|(this))\\.location(\\.href)?\\s*=")
-				.matcher(httpBody.toLowerCase());
-		if (locationMath.find()) {
-			String[] cs = httpBody.substring(locationMath.end()).trim()
-					.split("[> ;<]");
-			locationUrl = cs[0];
-			cs = null;
-			return locationUrl;
-		}
-		// 没有转向
-		return null;
-	}	
 }
