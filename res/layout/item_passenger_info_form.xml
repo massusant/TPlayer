@@ -26,17 +26,6 @@
         android:text="证件类型" />
 
     <EditText
-        android:id="@+id/cellphone"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/button1"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/id_code"
-        android:layout_toLeftOf="@+id/checkBox1"
-        android:ems="10"
-        android:hint="手机号码" />
-
-    <EditText
         android:id="@+id/passenger_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -59,21 +48,40 @@
         android:ems="10"
         android:hint="证件号码" />
 
+    <EditText
+        android:id="@+id/moblephone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/remove_line"
+        android:layout_alignBottom="@+id/remove_line"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/id_code"
+        android:layout_toLeftOf="@+id/checkBox1"
+        android:ems="10"
+        android:hint="手机号码" />
+
+    <CheckBox
+        android:id="@+id/checkBox1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/remove_line"
+        android:layout_alignTop="@+id/remove_line"
+        android:layout_toLeftOf="@+id/remove_line"
+        android:text="收藏" />
+    
     <Button
-        android:id="@+id/button1"
+        android:id="@+id/remove_line"
         android:layout_width="50dp"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_below="@+id/id_code"
         android:text="X" />
 
-    <CheckBox
-        android:id="@+id/checkBox1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/button1"
-        android:layout_alignTop="@+id/cellphone"
-        android:layout_toLeftOf="@+id/button1"
-        android:text="收藏" />
+    <Button
+        android:id="@+id/add_one_below"
+        android:text="增加"
+        android:layout_below="@+id/moblephone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
     
 </RelativeLayout>

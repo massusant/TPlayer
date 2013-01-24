@@ -62,7 +62,7 @@ public class RpcHelper {
 			if (result != null)
 				return result;
 			try {
-				TimeUnit.MILLISECONDS.sleep(2000);
+				TimeUnit.MILLISECONDS.sleep(500);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

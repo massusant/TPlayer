@@ -13,6 +13,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.graphics.Bitmap;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.heavenly.ticket.model.LeftTicketState;
@@ -54,8 +55,17 @@ public class OrderTicketTransaction extends BaseTransaction {
 	public String obtainToken() {
 		String ret = RpcHelper.doInvokeRpcByPost(URL_QUERY_TOKEN, obtainRequestHeader(), getParamForToken());
 		mToken = getTOKEN(ret);
+		if (TextUtils.isEmpty(mToken)) {
+			Log.d(TAG, "TOKEN获取失败");
+			return null;
+		}
 		mTicket = getTicket(ret);
+		if (TextUtils.isEmpty(mTicket)) {
+			Log.d(TAG, "Ticket获取失败");
+			return null;
+		}
 		Log.d(TAG, "org.apache.struts.taglib.html.TOKEN=" + mToken);
+		Log.d(TAG, "ticket=" + mTicket);
 		return mToken;
 	}
 	
@@ -79,6 +89,9 @@ public class OrderTicketTransaction extends BaseTransaction {
 			RpcHelper.setFollowRedirect(false);
 			String ret = RpcHelper.doInvokeRpcByPost(url,
 					obtainOrderCheckHeader(), param);
+			if (TextUtils.isEmpty(ret)) {
+				return null;
+			}
 			JSONObject json = new JSONObject(ret);
 			// {"checkHuimd":"Y","check608":"Y","msg":"","errMsg":"Y"}
 			if (!"Y".equals(json.getString("errMsg"))
@@ -86,9 +99,12 @@ public class OrderTicketTransaction extends BaseTransaction {
 					|| !"Y".equals(json.get("check608"))) {
 				return null;
 			}
-//			ret = RpcHelper.doInvokeRpc(URL_ORDER_QUENE, obtainOrderCheckHeader(), getQueneCountParams());
+			ret = RpcHelper.doInvokeRpc(URL_ORDER_QUENE, obtainOrderQueueHeader(), getQueneCountParams());
+			if (TextUtils.isEmpty(ret)) return null;
+			json = new JSONObject(ret);
+			mTicket = json.optString("ticket", mTicket);
 			param = getParamForOrder();
-			String result = RpcHelper.doInvokeRpcByPost(URL_ORDER_SUBMIT + "&rand=" + mVerifyCode, obtainOrderCheckHeader(), param);
+			String result = RpcHelper.doInvokeRpcByPost(URL_ORDER_SUBMIT/* + "&rand=" + mVerifyCode*/, obtainOrderCheckHeader(), param);
 			return result;
 		} catch (JSONException e) {
 			e.printStackTrace();
@@ -103,6 +119,15 @@ public class OrderTicketTransaction extends BaseTransaction {
 		header.put("Referer",
 				"https://dynamic.12306.cn/otsweb/order/querySingleAction.do?method=init");
 		header.remove("X-Requested-With");
+		return header;
+	}
+	
+	protected HashMap<String, String> obtainOrderQueueHeader() {
+		HashMap<String, String> header = super.obtainRequestHeader();
+		header.put("Accept", "application/json,text/javascript,*/*");
+		header.remove("Origin");
+		header.put("Referer",
+				"https://dynamic.12306.cn/otsweb/order/confirmPassengerAction.do?method=init");
 		return header;
 	}
 	
@@ -151,6 +176,14 @@ public class OrderTicketTransaction extends BaseTransaction {
 		return null;
 	}
 	
+//	method:getQueueCount
+//	train_date:2013-02-01
+//	train_no:570000L71004
+//	station:L710
+//	seat:1
+//	from:XHH
+//	to:SNH
+//	ticket:10025530681002550121
 	private List<NameValuePair> getQueneCountParams() {
 		ArrayList<NameValuePair> param = new ArrayList<NameValuePair>();
 		param.add(new BasicNameValuePair("method", "getQueueCount"));

@@ -10,9 +10,11 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.Toast;
 
 import com.heavenly.ticket.R;
+import com.heavenly.ticket.adapter.PassengerFormAdapter;
 import com.heavenly.ticket.model.LeftTicketState;
 import com.heavenly.ticket.transaction.OrderTicketTransaction;
 
@@ -31,6 +33,7 @@ public class OrderFormActivity extends Activity {
 	}
 
 	private void initViews(Intent intent) {
+		mListView = (ListView) findViewById(R.id.passenger_info_list);
 		mVerifyCodeText = (EditText) findViewById(R.id.verify_code_value);
 		mVerifyCodeImage = (ImageView) findViewById(R.id.verify_code_image);
 	}
@@ -42,6 +45,8 @@ public class OrderFormActivity extends Activity {
 				.getStringExtra(getString(R.string.intent_key_departure_date));
 
 		initToken();
+		mAdapter = new PassengerFormAdapter(this);
+		mListView.setAdapter(mAdapter);
 	}
 
 	private void initToken() {
@@ -131,6 +136,8 @@ public class OrderFormActivity extends Activity {
 		}.execute();
 	}
 
+	private ListView mListView;
+	private PassengerFormAdapter mAdapter;
 	private OrderTicketTransaction transaction;
 	private LeftTicketState ticketState;
 	private String travelDate;
