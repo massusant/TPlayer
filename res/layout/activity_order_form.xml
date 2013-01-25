@@ -14,11 +14,18 @@
 	    android:layout_height="wrap_content"/>
  -->
 	
-	<ListView
+	<ScrollView
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:layout_above="@+id/control_panel" >
+	    
+	<LinearLayout
 	    android:id="@+id/passenger_info_list"
-	    android:layout_above="@+id/control_panel"
+	    android:orientation="vertical"
 	    android:layout_width="match_parent"
-	    android:layout_height="match_parent" />
+	    android:layout_height="wrap_content" />
+	
+	</ScrollView>
 	
     <RelativeLayout
         android:id="@+id/control_panel"

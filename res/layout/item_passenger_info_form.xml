@@ -4,18 +4,28 @@
     android:layout_height="wrap_content" >
     
     <Button
-        android:id="@+id/seat_type"
-        android:layout_width="100dp"
-        android:layout_height="wrap_content"
-        android:text="席别" />
-
-    <Button
         android:id="@+id/ticket_for_people"
         android:layout_width="100dp"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:layout_toRightOf="@+id/seat_type"
         android:text="票种" />
+
+    <Button
+        android:id="@+id/seat_type"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/ticket_for_people"
+        android:text="席别" />
+
+    <EditText
+        android:id="@+id/passenger_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/ticket_for_people"
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@+id/seat_type"
+        android:ems="10"
+        android:hint="姓名" />
 
     <Button
         android:id="@+id/id_type"
@@ -24,19 +34,6 @@
         android:layout_alignParentLeft="true"
         android:layout_below="@+id/passenger_name"
         android:text="证件类型" />
-
-    <EditText
-        android:id="@+id/passenger_name"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/ticket_for_people"
-        android:layout_alignParentTop="true"
-        android:layout_toRightOf="@+id/ticket_for_people"
-        android:ems="10"
-        android:hint="姓名" >
-
-        <requestFocus />
-    </EditText>
 
     <EditText
         android:id="@+id/id_code"
@@ -56,12 +53,12 @@
         android:layout_alignBottom="@+id/remove_line"
         android:layout_alignParentLeft="true"
         android:layout_below="@+id/id_code"
-        android:layout_toLeftOf="@+id/checkBox1"
+        android:layout_toLeftOf="@+id/save_info"
         android:ems="10"
         android:hint="手机号码" />
 
     <CheckBox
-        android:id="@+id/checkBox1"
+        android:id="@+id/save_info"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/remove_line"
