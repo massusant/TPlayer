@@ -54,12 +54,20 @@ public class OrderTicketTransaction extends BaseTransaction {
 	
 	public String obtainToken() {
 		String ret = RpcHelper.doInvokeRpcByPost(URL_QUERY_TOKEN, obtainRequestHeader(), getParamForToken());
-		mToken = getTOKEN(ret);
+		if (TextUtils.isEmpty(ret) || ret.length() < 11264) {
+			return null;
+		}
+		StringBuilder sb = new StringBuilder();
+		sb.append(ret.trim());
+		String msg = sb.subSequence(3076, 11264).toString();
+		Log.d(TAG, "subs==========");
+		Log.d(TAG, msg);
+		mToken = getTOKEN(msg);
 		if (TextUtils.isEmpty(mToken)) {
 			Log.d(TAG, "TOKEN获取失败");
 			return null;
 		}
-		mTicket = getTicket(ret);
+		mTicket = getTicket(msg);
 		if (TextUtils.isEmpty(mTicket)) {
 			Log.d(TAG, "Ticket获取失败");
 			return null;
@@ -105,6 +113,13 @@ public class OrderTicketTransaction extends BaseTransaction {
 			mTicket = json.optString("ticket", mTicket);
 			param = getParamForOrder();
 			String result = RpcHelper.doInvokeRpcByPost(URL_ORDER_SUBMIT/* + "&rand=" + mVerifyCode*/, obtainOrderCheckHeader(), param);
+			if (TextUtils.isEmpty(result)) {
+				return null;
+			}
+			json = new JSONObject(result);
+			if (!"Y".equals(json.getString("errMsg"))) {
+				return null;
+			}
 			return result;
 		} catch (JSONException e) {
 			e.printStackTrace();
@@ -149,12 +164,13 @@ public class OrderTicketTransaction extends BaseTransaction {
 	}
 	
 	private String getTicket(String body) {
-		String[] text = matcher(body,
-				"left_ticket[\\w\\W]*/>");
-		if (text != null && text.length > 0) {
-			return text[0].split("value=\"")[1].split("\"")[0];
+		int offset = body.indexOf("left_ticket");
+		if (offset < 0) {
+			return null;
 		}
-		return null;
+		body = body.substring(offset);
+		String[] values = body.split("value=\"");
+		return values[1].split("\"")[0];
 	}
 	
 	private String[] matcher(String body, String pattern) {
