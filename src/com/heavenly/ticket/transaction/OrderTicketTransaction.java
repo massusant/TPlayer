@@ -47,9 +47,14 @@ public class OrderTicketTransaction extends BaseTransaction {
 		mVerifyCode = code;
 	}
 	
+	
 	@Override
 	public BaseResponse doAction() {
 		return null;
+	}
+	
+	public String getTicket() {
+		return mTicket;
 	}
 	
 	public String obtainToken() {

@@ -18,8 +18,8 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.heavenly.ticket.R;
-import com.heavenly.ticket.adapter.PassengerFormAdapter;
 import com.heavenly.ticket.model.LeftTicketState;
+import com.heavenly.ticket.model.Seat;
 import com.heavenly.ticket.transaction.OrderTicketTransaction;
 import com.heavenly.ticket.view.PassengerFormItemView;
 
@@ -27,6 +27,9 @@ public class OrderFormActivity extends Activity implements OnClickListener {
 
 	private List<PassengerFormItemView> mFormList;
 	private LinkedList<PassengerFormItemView> removedForms;
+	
+	private String[] mLeftSeatNames;
+	private Seat[] mLeftSeatType;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -48,9 +51,6 @@ public class OrderFormActivity extends Activity implements OnClickListener {
 		removedForms = new LinkedList<PassengerFormItemView>();
 		mFormList = new LinkedList<PassengerFormItemView>();
 		
-		PassengerFormItemView first = obtainFormView(0);
-		mFormList.add(first);
-		mMultiFormView.addView(first, 0);
 	}
 
 	private void initData(Intent intent) {
@@ -58,10 +58,9 @@ public class OrderFormActivity extends Activity implements OnClickListener {
 				.getSerializableExtra(getString(R.string.intent_key_left_ticket_state));
 		travelDate = intent
 				.getStringExtra(getString(R.string.intent_key_departure_date));
-
+		mLeftSeatNames = ticketState.getSeatLeftNames();
+		mLeftSeatType = ticketState.getSeatLeftTypes();
 		initToken();
-//		mAdapter = new PassengerFormAdapter(this);
-//		mListView.setAdapter(mAdapter);
 		
 	}
 	
@@ -73,7 +72,7 @@ public class OrderFormActivity extends Activity implements OnClickListener {
 			item = new PassengerFormItemView(this);
 			item.setOnClickListener(this);
 		}
-//		item.setPosition(position);
+		item.setLeftTicket(mLeftSeatNames, mLeftSeatType);
 		return item;
 	}
 	
@@ -118,6 +117,9 @@ public class OrderFormActivity extends Activity implements OnClickListener {
 				}
 				transaction.setTicketInfo(ticketState, travelDate);
 				if (transaction.obtainToken() != null) {
+					ticketState.parseLeftSeatNum(transaction.getTicket());
+					mLeftSeatNames = ticketState.getSeatLeftNames();
+					mLeftSeatType = ticketState.getSeatLeftTypes();
 					return transaction.refreshVerifyBitmap();
 				}
 				return null;
@@ -128,6 +130,9 @@ public class OrderFormActivity extends Activity implements OnClickListener {
 				progress.dismiss();
 				if (result != null) {
 					mVerifyCodeImage.setImageBitmap(result);
+					PassengerFormItemView first = obtainFormView(0);
+					mFormList.add(first);
+					mMultiFormView.addView(first, 0);
 				}
 			}
 		}.execute();
@@ -192,7 +197,6 @@ public class OrderFormActivity extends Activity implements OnClickListener {
 	}
 
 	private LinearLayout mMultiFormView;
-	private PassengerFormAdapter mAdapter;
 	private OrderTicketTransaction transaction;
 	private LeftTicketState ticketState;
 	private String travelDate;

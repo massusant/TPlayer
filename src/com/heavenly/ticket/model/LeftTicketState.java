@@ -95,60 +95,62 @@ public class LeftTicketState implements Serializable {
 		state.mBookable = state.parseOrderParams(detail[16]);
 		if (state.mBookable) {
 			state.parseLeftSeatNum(state.pYpInfoDetail);
+		} else {
+			state.mSeatNumString = "无票";
 		}
 		return state;
 	}
 	
-	private static final int OFFSET_LEFT_NUM = 5;
-	private static final int SEAT_ENOUGHT = -1;
-	private static final int SEAT_NOT_EXIST = -2;
-	private static final int SEAT_NOT_ON_SEAL = -3;
+//	private static final int OFFSET_LEFT_NUM = 5;
+//	private static final int SEAT_ENOUGHT = -1;
+	public static final int SEAT_NOT_EXIST = -2;
+//	private static final int SEAT_NOT_ON_SEAL = -3;
 	
-	private void parseLeftSeatNum(String[] info) {
-		if (info == null || info.length < OFFSET_LEFT_NUM
-				+ Seat.length.ordinal()) {
-			return;
-		}
-		mSeatNumMap = new SeatNumArray();
-		StringBuilder sb = new StringBuilder();
-		for (int i = OFFSET_LEFT_NUM; i < OFFSET_LEFT_NUM
-				+ Seat.length.ordinal(); i++) {
-			String dataStr = info[i];
-			if ("--".equals(dataStr)) {
-				continue;
-			}
-			if ("*".equals(dataStr)) {
-				mSeatNumMap.put(i - OFFSET_LEFT_NUM, SEAT_NOT_ON_SEAL);
-				continue;
-			}
-			if ("有".equals(dataStr)) {
-				mSeatNumMap.put(i - OFFSET_LEFT_NUM, SEAT_ENOUGHT);
-				mBookable = true;
-				sb.append(Seat.values()[i - OFFSET_LEFT_NUM].toString())
-						.append(":").append(dataStr).append("|");
-				continue;
-			}
-			if ("无".equals(dataStr)) {
-				mSeatNumMap.put(i - OFFSET_LEFT_NUM, 0);
-				continue;
-			}
-			try {
-				int num = Integer.parseInt(dataStr);
-				mBookable = num > 0;
-				mSeatNumMap.put(i - OFFSET_LEFT_NUM, num);
-				sb.append(Seat.values()[i - OFFSET_LEFT_NUM].toString())
-						.append(":").append(dataStr).append("|");
-			} catch (NumberFormatException e) {
-				e.printStackTrace();
-			}
-		}
-		if (sb.length() > 0) {
-			sb.deleteCharAt(sb.length() - 1);
-			mSeatNumString = sb.toString();
-		} else {
-			mSeatNumString = "无票";
-		}
-	}
+//	private void parseLeftSeatNum(String[] info) {
+//		if (info == null || info.length < OFFSET_LEFT_NUM
+//				+ Seat.length.ordinal()) {
+//			return;
+//		}
+//		mSeatNumMap = new SeatNumArray();
+//		StringBuilder sb = new StringBuilder();
+//		for (int i = OFFSET_LEFT_NUM; i < OFFSET_LEFT_NUM
+//				+ Seat.length.ordinal(); i++) {
+//			String dataStr = info[i];
+//			if ("--".equals(dataStr)) {
+//				continue;
+//			}
+//			if ("*".equals(dataStr)) {
+//				mSeatNumMap.put(i - OFFSET_LEFT_NUM, SEAT_NOT_ON_SEAL);
+//				continue;
+//			}
+//			if ("有".equals(dataStr)) {
+//				mSeatNumMap.put(i - OFFSET_LEFT_NUM, SEAT_ENOUGHT);
+//				mBookable = true;
+//				sb.append(Seat.values()[i - OFFSET_LEFT_NUM].toString())
+//						.append(":").append(dataStr).append("|");
+//				continue;
+//			}
+//			if ("无".equals(dataStr)) {
+//				mSeatNumMap.put(i - OFFSET_LEFT_NUM, 0);
+//				continue;
+//			}
+//			try {
+//				int num = Integer.parseInt(dataStr);
+//				mBookable = num > 0;
+//				mSeatNumMap.put(i - OFFSET_LEFT_NUM, num);
+//				sb.append(Seat.values()[i - OFFSET_LEFT_NUM].toString())
+//						.append(":").append(dataStr).append("|");
+//			} catch (NumberFormatException e) {
+//				e.printStackTrace();
+//			}
+//		}
+//		if (sb.length() > 0) {
+//			sb.deleteCharAt(sb.length() - 1);
+//			mSeatNumString = sb.toString();
+//		} else {
+//			mSeatNumString = "无票";
+//		}
+//	}
 	
 	private boolean parseOrderParams(String actionStr) throws Exception {
 		String[] values = actionStr.split("'");
@@ -171,7 +173,7 @@ public class LeftTicketState implements Serializable {
 		return true;
 	}
 	
-	private void parseLeftSeatNum(String ypInfo) {
+	public void parseLeftSeatNum(String ypInfo) {
 		if (TextUtils.isEmpty(ypInfo)) {
 			return;
 		}
@@ -258,8 +260,27 @@ public class LeftTicketState implements Serializable {
 	public String getLocationCode() {
 		return pLocationCode;
 	}
-	public String getsSeatNumString() {
+	public String getSeatNumString() {
 		return mSeatNumString;
 	}
 	
+	public String[] getSeatLeftNames() {
+		int count = mSeatNumMap.size();
+		String[] names = new String[count];
+		for (int i = 0; i < count; i++) {
+			int ord = mSeatNumMap.keyAt(i);
+			names[i] = Seat.values()[ord].toString();
+		}
+		return names;
+	}
+	
+	public Seat[] getSeatLeftTypes() {
+		int count = mSeatNumMap.size();
+		Seat[] seats = new Seat[count];
+		for (int i = 0; i < count; i++) {
+			int ord = mSeatNumMap.keyAt(i);
+			seats[i] = Seat.values()[ord];
+		}
+		return seats;
+	}
 }

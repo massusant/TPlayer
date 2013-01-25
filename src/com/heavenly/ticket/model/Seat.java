@@ -5,12 +5,12 @@ import java.util.HashMap;
 public enum Seat {
 	GSEAT_VIP, GSEAT_SPECIAL, GSEAT_FIRST, GSEAT_SECOND, 
 	SLEEPER_VIP, SLEEPER_SOFT, SLEEPER_HARD, 
-	SEAT_SOFT, SEAT_HARD, SEAT_NONE, OTHERS, length;
+	SEAT_SOFT, SEAT_HARD, SEAT_NONE, OTHERS;
 	
-	private static final String[] SEAT_NAME_ARRAY = { "商务座", "特等座", "一等座",
-		"二等座", "高级软卧", "软卧", "硬卧", "软座", "硬座", "无座", "其他", "length" };
-	private static final String[] SEAT_CODE_ARRAY = { "9", "P", "M", "O", "6",
-		"4", "3", "2", "1", "-", "-" };
+	public static final String[] SEAT_NAME_ARRAY = { "商务座", "特等座", "一等座",
+		"二等座", "高级软卧", "软卧", "硬卧", "软座", "硬座", "无座", "其他"};
+	public static final String[] SEAT_CODE_ARRAY = { "9", "P", "M", "O", "6",
+		"4", "3", "2", "1", "-", "-"};
 	
 	private final static HashMap<String, Seat> CODE_SEAT_MAP = new HashMap<String, Seat>();
 	
