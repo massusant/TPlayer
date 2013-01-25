@@ -8,6 +8,8 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 
@@ -17,7 +19,8 @@ import com.heavenly.ticket.model.Passenger;
 import com.heavenly.ticket.model.Seat;
 import com.heavenly.ticket.model.TicketType;
 
-public class PassengerFormItemView extends RelativeLayout implements OnClickListener {
+public class PassengerFormItemView extends RelativeLayout implements
+		OnClickListener, OnCheckedChangeListener {
 
 	private String[] leftTicketNames;
 	private Seat[] leftTicketTypes;
@@ -40,7 +43,6 @@ public class PassengerFormItemView extends RelativeLayout implements OnClickList
 	}
 	
 	public void setPosition(int pos) {
-		mPosition = pos;
 		removeLine.setTag(pos);
 	}
 	
@@ -82,6 +84,7 @@ public class PassengerFormItemView extends RelativeLayout implements OnClickList
 		ticketTypeChoice.setOnClickListener(this);
 		seatTypeChoice.setOnClickListener(this);
 		idcardTypeChoice.setOnClickListener(this);
+		saveCheck.setOnCheckedChangeListener(this);
 		
 		ticketTypeChoice.setText(TicketType.ADULT.toString());
 		idcardTypeChoice.setText(IdCardType.GEN_IDCARD_2.toString());
@@ -176,7 +179,6 @@ public class PassengerFormItemView extends RelativeLayout implements OnClickList
 	private AlertDialog idcardChoiceDialog;
 	
 	private Passenger mPassenger;
-	private int mPosition;
 	
 	private Button addLine;
 	private Button ticketTypeChoice;
@@ -187,6 +189,12 @@ public class PassengerFormItemView extends RelativeLayout implements OnClickList
 	private EditText nameInput;
 	private EditText idcardInput;
 	private EditText mobileInput;
+
+	@Override
+	public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+		// TODO Auto-generated method stub
+		
+	}
 	
 	
 }

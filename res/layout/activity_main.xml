@@ -11,12 +11,14 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
+        android:gravity="center"
+        android:layout_margin="10dp"
         android:text="Medium Text"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <Button
         android:id="@+id/order_in_normal"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_below="@+id/welcome_prompt"
@@ -25,21 +27,20 @@
 
     <Button
         android:id="@+id/order_in_violent"
-        android:visibility="gone"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_below="@+id/order_in_normal"
         android:onClick="onOrderSpecialClick"
-        android:text="高级订票" />
+        android:text="自动订票" />
 
     <Button
-        android:id="@+id/button3"
+        android:id="@+id/orders_search_list"
         android:visibility="gone"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_below="@+id/order_in_violent"
-        android:text="Button" />
+        android:text="订单查询" />
 
 </RelativeLayout>

@@ -29,7 +29,7 @@ public class LoginTransaction extends BaseTransaction {
 	private String loginRand;
 	
 	private BaseResponse mRespons;
-	private String mainResponsContent;
+//	private String mainResponsContent;
 	private String mShowName;
 	private String mShowGender;
 	
@@ -121,7 +121,7 @@ public class LoginTransaction extends BaseTransaction {
 			return false;
 		}
 		if (content.contains(FLAG_CONTENT_SUCCESS)) {
-			mainResponsContent = content;
+//			mainResponsContent = content;
 			mShowName = parseShowName(content);
 			mShowGender = parseGender(content);
 			return true;

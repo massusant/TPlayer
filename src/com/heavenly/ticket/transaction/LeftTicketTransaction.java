@@ -12,7 +12,6 @@ import org.apache.http.message.BasicNameValuePair;
 import android.os.Bundle;
 import android.util.Log;
 
-import com.heavenly.ticket.R;
 import com.heavenly.ticket.model.LeftTicketState;
 import com.heavenly.ticket.util.RpcHelper;
 

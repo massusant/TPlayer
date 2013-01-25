@@ -39,7 +39,7 @@ public class OrderTicketTransaction extends BaseTransaction {
 	private String mTicket;
 	private String mathRandom;
 	
-	private List<Passenger> mPassengerList;
+//	private List<Passenger> mPassengerList;
 	
 	public void setTicketInfo(LeftTicketState ticketState, String date) {
 		mTicketState = ticketState;
@@ -221,31 +221,6 @@ public class OrderTicketTransaction extends BaseTransaction {
 		return param;
 	}
 	
-//		station_train_code:D378
-//		train_date:2013-01-23
-//		seattype_num:
-//		from_station_telecode:XHH
-//		to_station_telecode:AOH
-//		include_student:00
-//		from_station_telecode_name:杭州
-//		to_station_telecode_name:上海
-//		round_train_date:2013-01-23
-//		round_start_time_str:00:00--24:00
-//		single_round_type:1
-//		train_pass_type:QB
-//		train_class_arr:D#
-//		start_time_str:18:00--24:00
-//		lishi:01:25
-//		train_start_time:20:26
-//		trainno4:580000D37807
-//		arrive_time:21:51
-//		from_station_name:杭州南
-//		to_station_name:上海虹桥
-//		from_station_no:11
-//		to_station_no:15
-//		ypInfoDetail:O*****0081M*****0072O*****3039
-//		mmStr:C288747556E5EDCD7CF418C465AD7B05890A8DF675CE8399E1FE0F59
-//		locationCode:G1
 	private List<NameValuePair> getParamForToken() {
 		ArrayList<NameValuePair> list = new ArrayList<NameValuePair>();
 		list.add(new BasicNameValuePair("station_train_code", mTicketState.getTrainNoShow()));
@@ -341,8 +316,6 @@ public class OrderTicketTransaction extends BaseTransaction {
 		param.add(new BasicNameValuePair("orderRequest.to_station_name", ticketState.getStationGetOff()));
 		param.add(new BasicNameValuePair("orderRequest.cancel_flag","1"));
 		param.add(new BasicNameValuePair("orderRequest.id_mode","Y"));
-//		param.add(new BasicNameValuePair("oldPassengers", ""));
-//		param.add(new BasicNameValuePair("checkbox9", "Y"));
 		return param;
 	}
 
