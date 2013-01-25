@@ -69,7 +69,7 @@ public class LoginActivity extends Activity {
 
 		// Set up the login form.
 		mAccount = getIntent().getStringExtra(EXTRA_EMAIL);
-		mAccountView = (EditText) findViewById(R.id.email);
+		mAccountView = (EditText) findViewById(R.id.account);
 		if (!TextUtils.isEmpty(mAccount)) {
 			mAccountView.setText(mAccount);
 		}

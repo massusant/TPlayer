@@ -1,5 +1,6 @@
 package com.heavenly.ticket.activity;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -19,6 +20,7 @@ import android.widget.Toast;
 
 import com.heavenly.ticket.R;
 import com.heavenly.ticket.model.LeftTicketState;
+import com.heavenly.ticket.model.Passenger;
 import com.heavenly.ticket.model.Seat;
 import com.heavenly.ticket.transaction.OrderTicketTransaction;
 import com.heavenly.ticket.view.PassengerFormItemView;
@@ -182,7 +184,7 @@ public class OrderFormActivity extends Activity implements OnClickListener {
 					transaction = new OrderTicketTransaction();
 				}
 				transaction.setVerifyCode(code);
-				transaction.makeOrder();
+				transaction.makeOrder(getPassengersData());
 				return null;
 			}
 
@@ -194,6 +196,14 @@ public class OrderFormActivity extends Activity implements OnClickListener {
 				}
 			}
 		}.execute();
+	}
+	
+	private ArrayList<Passenger> getPassengersData() {
+		ArrayList<Passenger> list = new ArrayList<Passenger>();
+		for (int i = 0; i < mFormList.size(); i++) {
+			list.add(mFormList.get(i).pullPassengerData());
+		}
+		return list;
 	}
 
 	private LinearLayout mMultiFormView;

@@ -17,6 +17,7 @@ import android.text.TextUtils;
 import android.util.Log;
 
 import com.heavenly.ticket.model.LeftTicketState;
+import com.heavenly.ticket.model.Passenger;
 import com.heavenly.ticket.model.Seat;
 import com.heavenly.ticket.util.BitmapUtils;
 import com.heavenly.ticket.util.RpcHelper;
@@ -37,6 +38,8 @@ public class OrderTicketTransaction extends BaseTransaction {
 	private String mToken;
 	private String mTicket;
 	private String mathRandom;
+	
+	private List<Passenger> mPassengerList;
 	
 	public void setTicketInfo(LeftTicketState ticketState, String date) {
 		mTicketState = ticketState;
@@ -93,10 +96,10 @@ public class OrderTicketTransaction extends BaseTransaction {
 	}
 
 	boolean checked = false;
-	public String makeOrder() {
+	public String makeOrder(List<Passenger> passengers) {
 		List<NameValuePair> param = null;
 		try {
-			param = getParamForOrder();
+			param = getParamForOrder(passengers);
 			param.add(new BasicNameValuePair("tFlag", "dc"));
 			String url = URL_ORDER_CHECK + mVerifyCode;
 			RpcHelper.setFollowRedirect(false);
@@ -116,7 +119,7 @@ public class OrderTicketTransaction extends BaseTransaction {
 			if (TextUtils.isEmpty(ret)) return null;
 			json = new JSONObject(ret);
 			mTicket = json.optString("ticket", mTicket);
-			param = getParamForOrder();
+			param = getParamForOrder(passengers);
 			String result = RpcHelper.doInvokeRpcByPost(URL_ORDER_SUBMIT/* + "&rand=" + mVerifyCode*/, obtainOrderCheckHeader(), param);
 			if (TextUtils.isEmpty(result)) {
 				return null;
@@ -273,37 +276,50 @@ public class OrderTicketTransaction extends BaseTransaction {
 		return list;
 	}
 	
-	private List<NameValuePair> getParamForOrder() {
+	private List<NameValuePair> getParamForOrder(List<Passenger> passengers) {
 		ArrayList<NameValuePair> param = new ArrayList<NameValuePair>();
-		param.add(new BasicNameValuePair("org.apache.struts.taglib.html.TOKEN", mToken)); // token
-		param.add(new BasicNameValuePair("leftTicketStr", mTicket ));  // 余票信息
+		param.add(new BasicNameValuePair("org.apache.struts.taglib.html.TOKEN",
+				mToken)); // token
+		param.add(new BasicNameValuePair("leftTicketStr", mTicket)); // 余票信息
 		param.add(new BasicNameValuePair("textfield", "中文或拼音首字母"));
 		param.add(new BasicNameValuePair("checkbox0", "0"));
 		param.addAll(getOrderParams(mTicketState));
-//		for(int x=0; x< 5  ;x++){ // 最大支持5人
-			int index = 0;
-			int no = index +1;
-			String passenger = "passenger_"+no+"_";
-			
-			param.add(new BasicNameValuePair("passengerTickets", Seat.SEAT_HARD.getCode()+",0,"+
-					"1"+","+"文雪龙"+",1,"+"610481198805240037"+","+"13646815023"+",Y"));
-			param.add(new BasicNameValuePair("oldPassengers","文雪龙"+",1,"+"610481198805240037"));
-			param.add(new BasicNameValuePair(passenger+"seat", Seat.SEAT_HARD.getCode()));/*1--硬座,3--硬卧,4--软卧*///硬卧
-			param.add(new BasicNameValuePair(passenger+"ticket", "1"));//成人票  /* 1-成人 2-儿童 3-学生 4-残军*/
-			param.add(new BasicNameValuePair(passenger+"name", "文雪龙"));//姓名
-			param.add(new BasicNameValuePair(passenger+"cardtype", "1"));/*二代身份证*///证件类型
-			param.add(new BasicNameValuePair(passenger+"cardno", "610481198805240037"));//证件号码
-			param.add(new BasicNameValuePair(passenger+"mobileno", "13646815023"));//手机号
-//			param.add(new BasicNameValuePair(passenger+"seat_detail", ""));/*0-随机,3-上铺,2-中铺,1--下铺*///下铺
-//			param.add(new BasicNameValuePair(passenger+"seat_detail_select", "1"));/*0-随机,3-上铺,2-中铺,1--下铺*///下铺
+		for (int i = 0; i < passengers.size(); i++) { // 最大支持5人
+			int no = i + 1;
+			Passenger item = passengers.get(i);
+			String passenger = "passenger_" + no + "_";
+			param.add(new BasicNameValuePair("passengerTickets", item
+					.getSeatType().getCode() + ",0,"
+					+ item.getTicketType().getCode() + ","
+					+ item.getName() + ","
+					+ item.getIdcardType().getCode() + ","
+					+ item.getIdcardCode() + "," + item.getMobile() + ",Y"));
+			param.add(new BasicNameValuePair("oldPassengers", item.getName()
+					+ "," + item.getIdcardType().getCode() + ","
+					+ item.getIdcardCode()));
+			param.add(new BasicNameValuePair(passenger + "seat", item
+					.getSeatType().getCode()));/* 1--硬座,3--硬卧,4--软卧 */// 硬卧
+			param.add(new BasicNameValuePair(passenger + "ticket", item
+					.getTicketType().getCode()));// 成人票 /* 1-成人 2-儿童 3-学生 4-残军*/
+			param.add(new BasicNameValuePair(passenger + "name", item.getName()));// 姓名
+			param.add(new BasicNameValuePair(passenger + "cardtype", item
+					.getIdcardType().getCode()));/* 二代身份证 */// 证件类型
+			param.add(new BasicNameValuePair(passenger + "cardno", item
+					.getIdcardCode()));// 证件号码
+			param.add(new BasicNameValuePair(passenger + "mobileno", item
+					.getMobile()));// 手机号
+			// param.add(new BasicNameValuePair(passenger+"seat_detail",
+			// ""));/*0-随机,3-上铺,2-中铺,1--下铺*///下铺
+			// param.add(new BasicNameValuePair(passenger+"seat_detail_select",
+			// "1"));/*0-随机,3-上铺,2-中铺,1--下铺*///下铺
 			// paras+=JavaUtils.toPostParam(submitOrderParams)+"&";
 			param.add(new BasicNameValuePair("checkbox9", "Y"));
-//		}
-		for (int i = 0; i < 4; i++) {
+		}
+		for (int i = 0; i < 5 - passengers.size(); i++) {
 			param.add(new BasicNameValuePair("oldPassengers", ""));
 			param.add(new BasicNameValuePair("checkbox9", "Y"));
 		}
-		param.add(new BasicNameValuePair("orderRequest.reserve_flag", "A"));//支付方式
+		param.add(new BasicNameValuePair("orderRequest.reserve_flag", "A"));// 支付方式
 		param.add(new BasicNameValuePair("randCode", mVerifyCode));
 		return param;
 	}
