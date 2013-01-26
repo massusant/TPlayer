@@ -56,8 +56,9 @@ public class MainActivity extends Activity {
 		startActivity(intent);
 	}
 	
-	public void onOrderSpecialClick(View view) {
-		
+	public void onOrderAutoClick(View view) {
+		Intent intent = new Intent(this, AutoBookActivity.class);
+		startActivity(intent);
 	}
 
 	private TextView mWelcomePrompt;

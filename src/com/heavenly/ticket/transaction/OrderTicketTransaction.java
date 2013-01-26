@@ -38,7 +38,7 @@ public class OrderTicketTransaction extends BaseTransaction {
 	private String mTicket;
 	private String mathRandom;
 	
-//	private List<Passenger> mPassengerList;
+	private BaseResponse mResponse;
 	
 	public void setTicketInfo(LeftTicketState ticketState, String date) {
 		mTicketState = ticketState;
@@ -59,10 +59,15 @@ public class OrderTicketTransaction extends BaseTransaction {
 		return mTicket;
 	}
 	
-	public String obtainToken() {
+	public BaseResponse obtainToken() {
+		if (mResponse == null) {
+			mResponse = new BaseResponse();
+		}
 		String ret = RpcHelper.doInvokeRpcByPost(URL_QUERY_TOKEN, obtainRequestHeader(), getParamForToken());
 		if (TextUtils.isEmpty(ret) || ret.length() < 11264) {
-			return null;
+			mResponse.success = false;
+			mResponse.msg = "TOKEN获取失败";
+			return mResponse;
 		}
 		StringBuilder sb = new StringBuilder();
 		sb.append(ret.trim());
@@ -71,17 +76,18 @@ public class OrderTicketTransaction extends BaseTransaction {
 		Log.d(TAG, msg);
 		mToken = getTOKEN(msg);
 		if (TextUtils.isEmpty(mToken)) {
-			Log.d(TAG, "TOKEN获取失败");
-			return null;
+			mResponse.success = false;
+			mResponse.msg = "TOKEN获取失败";
+			return mResponse;
 		}
-		mTicket = getTicket(msg);
-		if (TextUtils.isEmpty(mTicket)) {
-			Log.d(TAG, "Ticket获取失败");
-			return null;
+		
+		String tmpTicket = getTicket(msg);
+		if (!TextUtils.isEmpty(tmpTicket)) {
+			mTicket = tmpTicket;
 		}
 		Log.d(TAG, "org.apache.struts.taglib.html.TOKEN=" + mToken);
 		Log.d(TAG, "ticket=" + mTicket);
-		return mToken;
+		return mResponse;
 	}
 	
 	public Bitmap refreshVerifyBitmap() {
@@ -90,29 +96,31 @@ public class OrderTicketTransaction extends BaseTransaction {
 		header.put("Accept", "*/*");
 		header.put("Referer",
 				"https://dynamic.12306.cn/otsweb/order/confirmPassengerAction.do?method=init");
-		
 		return BitmapUtils.getFromURL(URL_VERIFY_CODE + "&" + mathRandom, header, null);
 	}
 
 	boolean checked = false;
-	public String makeOrder(List<Passenger> passengers) {
+	public BaseResponse makeOrder(List<Passenger> passengers) {
 		List<NameValuePair> param = null;
 		try {
 			param = getParamForOrder(passengers);
 			param.add(new BasicNameValuePair("tFlag", "dc"));
 			String url = URL_ORDER_CHECK + mVerifyCode;
-//			RpcHelper.setFollowRedirect(false);
 			String ret = RpcHelper.doInvokeRpcByPost(url,
 					obtainOrderCheckHeader(), param);
 			if (TextUtils.isEmpty(ret)) {
-				return null;
+				mResponse.success = false;
+				mResponse.msg = "订单校验失败！";
+				return mResponse;
 			}
 			JSONObject json = new JSONObject(ret);
 			// {"checkHuimd":"Y","check608":"Y","msg":"","errMsg":"Y"}
 			if (!"Y".equals(json.getString("errMsg"))
 					|| !"Y".equals(json.get("checkHuimd"))
 					|| !"Y".equals(json.get("check608"))) {
-				return null;
+				mResponse.success = false;
+				mResponse.msg = json.getString("errMsg");
+				return mResponse;
 			}
 			ret = RpcHelper.doInvokeRpc(URL_ORDER_QUENE, obtainOrderQueueHeader(), getQueneCountParams());
 			if (TextUtils.isEmpty(ret)) return null;
@@ -124,14 +132,20 @@ public class OrderTicketTransaction extends BaseTransaction {
 				return null;
 			}
 			json = new JSONObject(result);
-			if (!"Y".equals(json.getString("errMsg"))) {
-				return null;
+			ret = json.getString("errMsg");
+			if (!"Y".equals(ret)) {
+				mResponse.success = false;
+				mResponse.msg = ret;
+				return mResponse;
 			}
-			return result;
+			return mResponse;
 		} catch (JSONException e) {
 			e.printStackTrace();
+			mResponse.success = false;
+			mResponse.msg = "数据解析错误！";
 		}
-		return null;
+		mResponse.success = false;
+		return mResponse;
 	}
 	
 	@Override
@@ -199,14 +213,6 @@ public class OrderTicketTransaction extends BaseTransaction {
 		return null;
 	}
 	
-//	method:getQueueCount
-//	train_date:2013-02-01
-//	train_no:570000L71004
-//	station:L710
-//	seat:1
-//	from:XHH
-//	to:SNH
-//	ticket:10025530681002550121
 	private List<NameValuePair> getQueneCountParams() {
 		ArrayList<NameValuePair> param = new ArrayList<NameValuePair>();
 		param.add(new BasicNameValuePair("method", "getQueueCount"));

@@ -31,7 +31,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_below="@+id/order_in_normal"
-        android:onClick="onOrderSpecialClick"
+        android:onClick="onOrderAutoClick"
         android:text="自动订票" />
 
     <Button

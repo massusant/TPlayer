@@ -5,4 +5,5 @@
     <string name="label_filter">行程设置</string>
     <string name="label_left_ticket">余票状态</string>
     <string name="label_passenger_info">旅客信息</string>
+    <string name="label_auto_book_task">自动订票</string>
 </resources>

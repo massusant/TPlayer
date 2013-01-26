@@ -6,7 +6,6 @@ import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.Button;
 import android.widget.TextView;
 
 import com.heavenly.ticket.R;
@@ -56,7 +55,6 @@ public class LeftTicketStateAdapter extends BaseAdapter {
 			holder.timeGetOn = (TextView) convertView.findViewById(R.id.time_get_on);
 			holder.timeGetOff = (TextView) convertView.findViewById(R.id.time_get_off);
 			holder.leftTicket = (TextView) convertView.findViewById(R.id.ticket_left_state);
-			holder.bookButton = (Button) convertView.findViewById(R.id.book_ticket);
 			convertView.setTag(holder);
 		} else {
 			holder = (ViewHolder) convertView.getTag();
@@ -67,12 +65,6 @@ public class LeftTicketStateAdapter extends BaseAdapter {
 			holder.timeGetOn.setText(item.getTimeGetOn());
 			holder.timeGetOff.setText(item.getTimeGetOff());
 			holder.leftTicket.setText(item.getSeatNumString());
-//			if (item.isBookable()) {
-//				holder.bookButton.setVisibility(View.VISIBLE);
-//			} else {
-//				holder.bookButton.setVisibility(View.INVISIBLE);
-//			}
-			holder.bookButton.setVisibility(View.INVISIBLE);
 		}
 		return convertView;
 	}
@@ -82,6 +74,5 @@ public class LeftTicketStateAdapter extends BaseAdapter {
 		TextView timeGetOn;
 		TextView timeGetOff;
 		TextView leftTicket;
-		Button bookButton;
 	}
 }

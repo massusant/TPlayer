@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="main_welcome">，您好！</string>
+    <string name="main_normal_book">普通订票</string>
+    <string name="main_auto_book">自动订票</string>
+</resources>

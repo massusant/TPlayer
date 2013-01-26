@@ -17,7 +17,7 @@
         android:theme="@style/AppTheme" >
         <activity
             android:name="com.heavenly.ticket.activity.LoginActivity"
-            android:label="@string/app_name"
+            android:label="@string/label_login"
             android:windowSoftInputMode="adjustResize|stateVisible" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -27,11 +27,11 @@
         </activity>
         <activity
             android:name="com.heavenly.ticket.activity.MainActivity"
-            android:label="@string/title_activity_main" >
+            android:label="@string/label_main" >
         </activity>
         <activity
             android:name="com.heavenly.ticket.activity.SelectTrainActivity"
-            android:label="@string/title_train_selector" >
+            android:label="@string/label_filter" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -39,12 +39,15 @@
             </intent-filter>
         </activity>
         <activity
+            android:name="com.heavenly.ticket.activity.AutoBookActivity"
+            android:label="@string/label_auto_book_task" />
+        <activity
             android:name="com.heavenly.ticket.activity.LeftTicketResultActivity"
-            android:label="@string/title_activity_query_left_ticket" >
+            android:label="@string/label_left_ticket" >
         </activity>
         <activity
             android:name="com.heavenly.ticket.activity.OrderFormActivity"
-            android:label="@string/title_activity_query_left_ticket" />
+            android:label="@string/label_passenger_info" />
     </application>
 
 </manifest>

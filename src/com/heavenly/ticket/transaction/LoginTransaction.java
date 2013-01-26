@@ -95,8 +95,8 @@ public class LoginTransaction extends BaseTransaction {
 			mRespons.msg = "登陆失败";
 			return false;
 		}
-		Log.d(TAG, "登陆成功");
-		mRespons.msg = "登陆成功";
+//		Log.d(TAG, "登陆成功");
+//		mRespons.msg = "登陆成功";
 		return true;
 	}
 	
@@ -127,12 +127,14 @@ public class LoginTransaction extends BaseTransaction {
 			return false;
 		}
 		if (content.contains(FLAG_CONTENT_SUCCESS)) {
-//			mainResponsContent = content;
 			mShowName = parseShowName(content);
 			mShowGender = parseGender(content);
+			mRespons.msg = "登陆成功";
 			return true;
 		} else if (content.contains(FLAG_CONTENT_MAINTAIN)) {
 			Log.d(TAG, FLAG_CONTENT_MAINTAIN);
+			mRespons.msg = "系统维护中，维护时间为23:00-07:00。";
+			return true;
 		}
 		return false; 
 	}
@@ -169,7 +171,7 @@ public class LoginTransaction extends BaseTransaction {
 		return header;
 	}
 	
-	private final String FLAG_CONTENT_SUCCESS = "欢迎您登录中国铁路客户服务中心网站";
-	private final String FLAG_CONTENT_MAINTAIN = "系统维护中，维护时间为23:00-07:00，在此期间，如需在互联网购票、改签或退票，请到铁路车站窗口办理，谢谢！";
+	private static final String FLAG_CONTENT_SUCCESS = "欢迎您登录中国铁路客户服务中心网站";
+	private static final String FLAG_CONTENT_MAINTAIN = "系统维护中，维护时间为23:00-07:00，在此期间，如需在互联网购票、改签或退票，请到铁路车站窗口办理，谢谢！";
 	
 }

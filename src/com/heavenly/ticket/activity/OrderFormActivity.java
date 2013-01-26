@@ -22,6 +22,7 @@ import com.heavenly.ticket.R;
 import com.heavenly.ticket.model.LeftTicketState;
 import com.heavenly.ticket.model.Passenger;
 import com.heavenly.ticket.model.Seat;
+import com.heavenly.ticket.transaction.BaseResponse;
 import com.heavenly.ticket.transaction.OrderTicketTransaction;
 import com.heavenly.ticket.view.PassengerFormItemView;
 
@@ -112,13 +113,15 @@ public class OrderFormActivity extends Activity implements OnClickListener {
 			progress.show();
 		}
 		new AsyncTask<Void, Void, Bitmap>() {
+			BaseResponse response;
 			@Override
 			protected Bitmap doInBackground(Void... params) {
 				if (transaction == null) {
 					transaction = new OrderTicketTransaction();
 				}
 				transaction.setTicketInfo(ticketState, travelDate);
-				if (transaction.obtainToken() != null) {
+				response = transaction.obtainToken();
+				if (response != null && response.success) {
 					ticketState.parseLeftSeatNum(transaction.getTicket());
 					mLeftSeatNames = ticketState.getSeatLeftNames();
 					mLeftSeatType = ticketState.getSeatLeftTypes();
@@ -130,11 +133,19 @@ public class OrderFormActivity extends Activity implements OnClickListener {
 			@Override
 			protected void onPostExecute(Bitmap result) {
 				progress.dismiss();
-				if (result != null) {
+				if (response == null) {
+					Toast.makeText(OrderFormActivity.this, "获取Token失败！",
+							Toast.LENGTH_SHORT).show();
+					return;
+				}
+				if (response.success && result != null) {
 					mVerifyCodeImage.setImageBitmap(result);
 					PassengerFormItemView first = obtainFormView(0);
 					mFormList.add(first);
 					mMultiFormView.addView(first, 0);
+				} else {
+					Toast.makeText(OrderFormActivity.this, response.msg,
+							Toast.LENGTH_SHORT).show();
 				}
 			}
 		}.execute();
@@ -177,22 +188,30 @@ public class OrderFormActivity extends Activity implements OnClickListener {
 		} else {
 			progress.show();
 		}
-		new AsyncTask<Void, Void, Bitmap>() {
+		new AsyncTask<Void, Void, BaseResponse>() {
 			@Override
-			protected Bitmap doInBackground(Void... params) {
+			protected BaseResponse doInBackground(Void... params) {
 				if (transaction == null) {
 					transaction = new OrderTicketTransaction();
 				}
 				transaction.setVerifyCode(code);
-				transaction.makeOrder(getPassengersData());
-				return null;
+				return transaction.makeOrder(getPassengersData());
 			}
 
 			@Override
-			protected void onPostExecute(Bitmap result) {
+			protected void onPostExecute(BaseResponse result) {
 				progress.dismiss();
 				if (result != null) {
-					mVerifyCodeImage.setImageBitmap(result);
+					if (result.success) {
+						Toast.makeText(OrderFormActivity.this, "订单提交成功！",
+								Toast.LENGTH_LONG).show();
+					} else {
+						Toast.makeText(OrderFormActivity.this, result.msg,
+								Toast.LENGTH_LONG).show();
+					}
+				} else {
+					Toast.makeText(OrderFormActivity.this, "订单提交失败！",
+							Toast.LENGTH_LONG).show();
 				}
 			}
 		}.execute();

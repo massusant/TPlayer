@@ -8,38 +8,42 @@
     <TextView
         android:id="@+id/train_name"
         android:layout_width="50dp"
-        android:layout_height="wrap_content"
+        android:layout_height="40dp"
         android:layout_alignParentLeft="true"
         android:layout_centerVertical="true"
+        android:gravity="center"
+        android:singleLine="true"
         android:textSize="16sp"
         android:text="TextView" />
 
     <TextView
         android:id="@+id/time_get_on"
-        android:layout_width="wrap_content"
+        android:layout_width="40dp"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_toRightOf="@+id/train_name"
-        android:text="TextView" />
+        android:gravity="center"
+        android:text="00:00" />
 
     <TextView
         android:id="@+id/time_get_off"
-        android:layout_width="wrap_content"
+        android:layout_width="40dp"
         android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/time_get_on"
         android:layout_alignParentBottom="true"
-        android:text="TextView" />
+        android:gravity="center"
+        android:text="00:00" />
 
     <TextView
         android:id="@+id/ticket_left_state"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
-        android:layout_toLeftOf="@+id/book_ticket"
         android:layout_toRightOf="@+id/time_get_on"
         android:gravity="center"
         android:text="TextView" />
 
+    <!-- 
     <Button
         android:id="@+id/book_ticket"
         android:layout_width="wrap_content"
@@ -47,5 +51,6 @@
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
         android:text="订票" />
+     -->
 
 </RelativeLayout>

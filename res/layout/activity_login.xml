@@ -89,7 +89,7 @@
                 android:layout_height="wrap_content" >
                 
 	            <CheckBox
-	                android:id="@+id/checkBox1"
+	                android:id="@+id/save_password_check"
 	                android:layout_width="120dp"
 	                android:layout_height="wrap_content"
 	                android:text="@string/login_rember_password" />

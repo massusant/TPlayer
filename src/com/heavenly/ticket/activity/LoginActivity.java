@@ -1,16 +1,9 @@
 package com.heavenly.ticket.activity;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
-
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.app.Activity;
-import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -22,7 +15,7 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
-import android.webkit.CookieSyncManager;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -60,7 +53,8 @@ public class LoginActivity extends Activity {
 	private View mLoginFormView;
 	private View mLoginStatusView;
 	private TextView mLoginStatusMessageView;
-	private Dialog progress;
+	private CheckBox saveCheck;
+	private ProgressDialog progress;
 	
 	// 
 	private LoginTransaction mService;
@@ -80,6 +74,7 @@ public class LoginActivity extends Activity {
 		mVerifyCodeImage = (ImageView) findViewById(R.id.verify_code_image);
 		mVerifyCodeValue = (EditText) findViewById(R.id.verify_code_value);
 		mPasswordView = (EditText) findViewById(R.id.password);
+		saveCheck = (CheckBox) findViewById(R.id.save_password_check);
 
 		mVerifyCodeValue
 				.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -193,49 +188,8 @@ public class LoginActivity extends Activity {
 		startActivity(intent);
 	}
 
-	/**
-	 * Shows the progress UI and hides the login form.
-	 */
-	@TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
-	private void showProgress(final boolean show) {
-		// On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
-		// for very easy animations. If available, use these APIs to fade-in
-		// the progress spinner.
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
-			int shortAnimTime = getResources().getInteger(
-					android.R.integer.config_shortAnimTime);
-
-			mLoginStatusView.setVisibility(View.VISIBLE);
-			mLoginStatusView.animate().setDuration(shortAnimTime)
-					.alpha(show ? 1 : 0)
-					.setListener(new AnimatorListenerAdapter() {
-						@Override
-						public void onAnimationEnd(Animator animation) {
-							mLoginStatusView.setVisibility(show ? View.VISIBLE
-									: View.GONE);
-						}
-					});
-
-			mLoginFormView.setVisibility(View.VISIBLE);
-			mLoginFormView.animate().setDuration(shortAnimTime)
-					.alpha(show ? 0 : 1)
-					.setListener(new AnimatorListenerAdapter() {
-						@Override
-						public void onAnimationEnd(Animator animation) {
-							mLoginFormView.setVisibility(show ? View.GONE
-									: View.VISIBLE);
-						}
-					});
-		} else {
-			// The ViewPropertyAnimator APIs are not available, so simply show
-			// and hide the relevant UI components.
-			mLoginStatusView.setVisibility(show ? View.VISIBLE : View.GONE);
-			mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
-		}
-	}
-	
-	public class VerifyCodeDownlodTask extends AsyncTask<Void, Void, Bitmap> {
-		final String CODE_URL = "https://dynamic.12306.cn/otsweb/passCodeAction.do";
+	class VerifyCodeDownlodTask extends AsyncTask<Void, Void, Bitmap> {
+		final String CODE_URL = "https://dynamic.12306.cn/otsweb/passCodeAction.do?rand=sjrand";
 		@Override
 		protected void onPreExecute() {
 			super.onPreExecute();
@@ -248,9 +202,9 @@ public class LoginActivity extends Activity {
 
 		@Override
 		protected Bitmap doInBackground(Void... arg0) {
-			List<NameValuePair> list = new ArrayList<NameValuePair>();
-			list.add(new BasicNameValuePair("rand", "sjrand"));
-			return BitmapUtils.getFromURL(CODE_URL, list);
+//			List<NameValuePair> list = new ArrayList<NameValuePair>();
+//			list.add(new BasicNameValuePair("rand", "sjrand"));
+			return BitmapUtils.getFromURL(CODE_URL, null);
 		}
 
 		@Override
@@ -270,35 +224,71 @@ public class LoginActivity extends Activity {
 	 * Represents an asynchronous login/registration task used to authenticate
 	 * the user.
 	 */
-	public class UserLoginTask extends AsyncTask<Void, Void, BaseResponse> {
+	class UserLoginTask extends AsyncTask<Void, Void, BaseResponse> {
 		@Override
 		protected BaseResponse doInBackground(Void... params) {
-			CookieSyncManager.createInstance(LoginActivity.this);
-
 			return mService.doAction();
 		}
 
 		@Override
 		protected void onPostExecute(final BaseResponse result) {
-			mAuthTask = null;
-			showProgress(false);
-
 			if (result.success) {
 				enterMain();
+				if (saveCheck.isChecked()) {
+					
+				}
 				finish();
-			} else {
-//				mPasswordView
-//						.setError(getString(R.string.error_incorrect_password));
-//				mPasswordView.requestFocus();
 			}
+			showProgress(false);
 			Toast.makeText(LoginActivity.this, String.valueOf(result.msg),
 					Toast.LENGTH_SHORT).show();
+			mAuthTask = null;
 		}
 
 		@Override
 		protected void onCancelled() {
-			mAuthTask = null;
 			showProgress(false);
+		}
+	}
+	
+	/**
+	 * Shows the progress UI and hides the login form.
+	 */
+	@TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
+	private void showProgress(final boolean show) {
+		// On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
+		// for very easy animations. If available, use these APIs to fade-in
+		// the progress spinner.
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
+			int shortAnimTime = getResources().getInteger(
+					android.R.integer.config_shortAnimTime);
+			
+			mLoginStatusView.setVisibility(View.VISIBLE);
+			mLoginStatusView.animate().setDuration(shortAnimTime)
+			.alpha(show ? 1 : 0)
+			.setListener(new AnimatorListenerAdapter() {
+				@Override
+				public void onAnimationEnd(Animator animation) {
+					mLoginStatusView.setVisibility(show ? View.VISIBLE
+							: View.GONE);
+				}
+			});
+			
+			mLoginFormView.setVisibility(View.VISIBLE);
+			mLoginFormView.animate().setDuration(shortAnimTime)
+			.alpha(show ? 0 : 1)
+			.setListener(new AnimatorListenerAdapter() {
+				@Override
+				public void onAnimationEnd(Animator animation) {
+					mLoginFormView.setVisibility(show ? View.GONE
+							: View.VISIBLE);
+				}
+			});
+		} else {
+			// The ViewPropertyAnimator APIs are not available, so simply show
+			// and hide the relevant UI components.
+			mLoginStatusView.setVisibility(show ? View.VISIBLE : View.GONE);
+			mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
 		}
 	}
 }
