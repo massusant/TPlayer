@@ -59,6 +59,12 @@ public class LoginTransaction extends BaseTransaction {
 		mRespons.success = doLogin();
 		return mRespons;
 	}
+	
+	public String initLogin() {
+		return RpcHelper.doInvokeRpc(
+				"https://dynamic.12306.cn/otsweb/loginAction.do?method=init",
+				null, null);
+	}
 
 	@Override
 	public List<NameValuePair> getParamList() {

@@ -10,6 +10,8 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
@@ -58,7 +60,9 @@ public class LoginActivity extends Activity {
 	private View mLoginFormView;
 	private View mLoginStatusView;
 	private TextView mLoginStatusMessageView;
+	private Dialog progress;
 	
+	// 
 	private LoginTransaction mService;
 
 	@Override
@@ -101,6 +105,8 @@ public class LoginActivity extends Activity {
 						attemptLogin();
 					}
 				});
+		showProgress(false);
+		
 		attemptVerifyCode();
 	}
 
@@ -116,7 +122,7 @@ public class LoginActivity extends Activity {
 	}
 	
 	public void attemptVerifyCode() {
-		showProgress(true);
+		mService = new LoginTransaction();
 		new VerifyCodeDownlodTask().execute();
 	}
 
@@ -157,10 +163,6 @@ public class LoginActivity extends Activity {
 			mAccountView.setError(getString(R.string.error_field_required));
 			focusView = mAccountView;
 			cancel = true;
-//		} else if (!mAccount.contains("@")) {
-//			mAccountView.setError(getString(R.string.error_invalid_email));
-//			focusView = mAccountView;
-//			cancel = true;
 		}
 
 		if (cancel) {
@@ -235,6 +237,16 @@ public class LoginActivity extends Activity {
 	public class VerifyCodeDownlodTask extends AsyncTask<Void, Void, Bitmap> {
 		final String CODE_URL = "https://dynamic.12306.cn/otsweb/passCodeAction.do";
 		@Override
+		protected void onPreExecute() {
+			super.onPreExecute();
+			if (progress == null) {
+				progress = ProgressDialog.show(LoginActivity.this, "", "正在刷新……", true);
+			} else {
+				progress.show();
+			}
+		}
+
+		@Override
 		protected Bitmap doInBackground(Void... arg0) {
 			List<NameValuePair> list = new ArrayList<NameValuePair>();
 			list.add(new BasicNameValuePair("rand", "sjrand"));
@@ -243,14 +255,15 @@ public class LoginActivity extends Activity {
 
 		@Override
 		protected void onPostExecute(Bitmap result) {
-			showProgress(false);
+			progress.dismiss();
 			if (result == null) {
 				mVerifyCodeImage.setImageDrawable(null);
+				Toast.makeText(LoginActivity.this, "验证码获取失败!",
+						Toast.LENGTH_SHORT).show();
 				return;
 			}
 			mVerifyCodeImage.setImageBitmap(result);
 		}
-		
 	}
 
 	/**
