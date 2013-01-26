@@ -27,9 +27,8 @@ public class OrderTicketTransaction extends BaseTransaction {
 
 	private static final String URL_QUERY_TOKEN = "https://dynamic.12306.cn/otsweb/order/querySingleAction.do?method=submutOrderRequest";
 	private static final String URL_VERIFY_CODE = "https://dynamic.12306.cn/otsweb/passCodeAction.do?rand=randp";
-	//private static final String URL_CONFIRM_PASSENGER = "https://dynamic.12306.cn/otsweb/order/confirmPassengerAction.do?method=init";
-	private static final String URL_ORDER_QUENE = "https://dynamic.12306.cn/otsweb/order/confirmPassengerAction.do";
 	private static final String URL_ORDER_CHECK = "https://dynamic.12306.cn/otsweb/order/confirmPassengerAction.do?method=checkOrderInfo&rand=";
+	private static final String URL_ORDER_QUENE = "https://dynamic.12306.cn/otsweb/order/confirmPassengerAction.do";
 	private static final String URL_ORDER_SUBMIT = "https://dynamic.12306.cn/otsweb/order/confirmPassengerAction.do?method=confirmSingleForQueue";
 	
 	private LeftTicketState mTicketState;
@@ -102,7 +101,7 @@ public class OrderTicketTransaction extends BaseTransaction {
 			param = getParamForOrder(passengers);
 			param.add(new BasicNameValuePair("tFlag", "dc"));
 			String url = URL_ORDER_CHECK + mVerifyCode;
-			RpcHelper.setFollowRedirect(false);
+//			RpcHelper.setFollowRedirect(false);
 			String ret = RpcHelper.doInvokeRpcByPost(url,
 					obtainOrderCheckHeader(), param);
 			if (TextUtils.isEmpty(ret)) {
@@ -120,7 +119,7 @@ public class OrderTicketTransaction extends BaseTransaction {
 			json = new JSONObject(ret);
 			mTicket = json.optString("ticket", mTicket);
 			param = getParamForOrder(passengers);
-			String result = RpcHelper.doInvokeRpcByPost(URL_ORDER_SUBMIT/* + "&rand=" + mVerifyCode*/, obtainOrderCheckHeader(), param);
+			String result = RpcHelper.doInvokeRpcByPost(URL_ORDER_SUBMIT, obtainOrderCheckHeader(), param);
 			if (TextUtils.isEmpty(result)) {
 				return null;
 			}

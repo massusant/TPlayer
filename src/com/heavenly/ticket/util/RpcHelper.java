@@ -174,7 +174,7 @@ public class RpcHelper {
 		}
 		urlConnection.setConnectTimeout(CONNECTION_TIME_OUT);
 		urlConnection.setReadTimeout(READ_TIME_OUT);
-//		urlConnection.setInstanceFollowRedirects(sFollowRedirect);
+		urlConnection.setInstanceFollowRedirects(sFollowRedirect);
 		return urlConnection;
 	}
 	
