@@ -15,6 +15,8 @@ local.properties
 .classpath
 .settings/
 .loadpath
+snowd
+snowd.pub
 
 # External tool builders
 .externalToolBuilders/
