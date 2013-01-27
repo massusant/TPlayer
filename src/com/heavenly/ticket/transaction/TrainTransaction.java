@@ -21,7 +21,7 @@ public class TrainTransaction {
 	public static ArrayList<Train> queryTrain(QueryTrainParam param) throws JSONException {
 		ArrayList<NameValuePair> paramList = param.getParamList();
 		paramList.add(new BasicNameValuePair("method", "queryststrainall"));
-		String ret = RpcHelper.invokeRpc(URL_QUERY_TRAIN, null, paramList);
+		String ret = RpcHelper.invokeRpcByPost(URL_QUERY_TRAIN, null, paramList);
 		if (TextUtils.isEmpty(ret)) {
 			return null;
 		}
@@ -99,9 +99,9 @@ public class TrainTransaction {
 		}
 		public ArrayList<NameValuePair> getParamList() {
 			ArrayList<NameValuePair> params = new ArrayList<NameValuePair>();
+			params.add(new BasicNameValuePair("date", date));
 			params.add(new BasicNameValuePair("fromstation", fromStation));
 			params.add(new BasicNameValuePair("tostation", toStation));
-			params.add(new BasicNameValuePair("date", date));
 			params.add(new BasicNameValuePair("starttime", startTime));
 			return params;
 		}

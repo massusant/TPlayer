@@ -31,7 +31,7 @@ public class AutoBookActivity extends Activity {
 	
 	public void onAddActionClick(MenuItem item) {
 		Log.d(TAG, "add action");
-		Intent intent = new Intent(this, TrainSelectorActivity.class);
+		Intent intent = new Intent(this, SelectTrainActivity.class);
 		startActivity(intent);
 	}
 	

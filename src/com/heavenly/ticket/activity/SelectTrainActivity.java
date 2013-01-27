@@ -38,6 +38,11 @@ import com.heavenly.ticket.util.DateShowUtils;
 
 public class SelectTrainActivity extends Activity {
 	
+	public static final int RESULT_SELECTED = 102;
+	public static final int RESULT_CANCLE = 103;
+	
+	public static final String INTENT_KEY_MODE = "start_mode";
+	
 	final String TAG = "TrainSelector";
 	
 	final CharSequence[] TIME_ITEMS = new CharSequence[] { "00:00--24:00",
@@ -53,18 +58,25 @@ public class SelectTrainActivity extends Activity {
 	private boolean[] mSelectTrainClass = {true, true, true, true, true};
 	private TrainSelectorAdapter mAdapter;
 	
+	private boolean mTaskMode = false;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_train_selector);
-		initViews();
+		Intent intent = getIntent();
+		mTaskMode = intent.getBooleanExtra(INTENT_KEY_MODE, false);
+		initViews(intent);
 	}
 	
-	private void initViews() {
-		
+	private void initViews(Intent intent) {
+		if (mTaskMode) {
+			findViewById(R.id.select_train).setVisibility(View.GONE);
+		}
 		startStationInput = (AutoCompleteTextView) findViewById(R.id.saddr_value);
 		destStationInput = (AutoCompleteTextView) findViewById(R.id.daddr_value);
 		mTrainList = (ListView) findViewById(R.id.train_list);
+		mTrainList.setOnItemClickListener(trainClickListener);
 		
 		StationSuggestionListAdapter adapter = new StationSuggestionListAdapter(this);
 		startStationInput.setAdapter(adapter);
@@ -258,7 +270,7 @@ public class SelectTrainActivity extends Activity {
 		intent.putExtra(getString(R.string.intent_key_departure_time), mTimeStartOff);
 		intent.putExtra(getString(R.string.intent_key_train_no), "");
 		intent.putExtra(getString(R.string.intent_key_include_student), "00");
-		intent.putExtra(getString(R.string.intent_key_train_class), "D#Z#T#K#QT#");
+		intent.putExtra(getString(R.string.intent_key_train_class), "QB#D#Z#T#K#QT#");
 		intent.putExtra(getString(R.string.intent_key_train_pass_type), "QB");
 		startActivity(intent);
 	}
@@ -283,12 +295,23 @@ public class SelectTrainActivity extends Activity {
 	private AlertDialog mTrainClassChoiceDialog;
 	private Handler mHandler;
 	
-	class StationItemClickListener implements OnItemClickListener {
-
+	private OnItemClickListener trainClickListener = new OnItemClickListener() {
 		@Override
-		public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
+		public void onItemClick(AdapterView<?> arg0, View arg1, int position,
 				long arg3) {
+			if (mAdapter == null) return;
+			Intent intent = new Intent();
+			intent.putExtra(getString(R.string.intent_key_from_station_code), startStationCode);
+			intent.putExtra(getString(R.string.intent_key_to_station_code), destStationCode);
+			intent.putExtra(getString(R.string.intent_key_departure_date), mDateStartOff);
+			intent.putExtra(getString(R.string.intent_key_departure_time), mTimeStartOff);
+			intent.putExtra(getString(R.string.intent_key_train_no), mAdapter.getItem(position).getId());
+			intent.putExtra(getString(R.string.intent_key_include_student), "00");
+			intent.putExtra(getString(R.string.intent_key_train_class), "QB#D#Z#T#K#QT#");
+			intent.putExtra(getString(R.string.intent_key_train_pass_type), "QB");
+//			startActivity(intent);
+			setResult(RESULT_SELECTED, intent);
+			finish();
 		}
-		
-	}
+	};
 }

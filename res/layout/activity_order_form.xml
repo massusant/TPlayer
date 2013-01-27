@@ -19,11 +19,11 @@
 		android:layout_height="match_parent"
 		android:layout_above="@+id/control_panel" >
 	    
-	<LinearLayout
-	    android:id="@+id/passenger_info_list"
-	    android:orientation="vertical"
-	    android:layout_width="match_parent"
-	    android:layout_height="wrap_content" />
+		<LinearLayout
+		    android:id="@+id/passenger_info_list"
+		    android:orientation="vertical"
+		    android:layout_width="match_parent"
+		    android:layout_height="wrap_content" />
 	
 	</ScrollView>
 	
@@ -60,6 +60,15 @@
             android:layout_alignParentRight="true"
             android:onClick="onSubmitClick"
             android:text="提交" />
-    </RelativeLayout>   
+    </RelativeLayout>
+    
+    <Button
+        android:id="@+id/start_task"
+        android:visibility="gone"
+        android:onClick="onStartTaskClick"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:text="开始" />
 
 </RelativeLayout>

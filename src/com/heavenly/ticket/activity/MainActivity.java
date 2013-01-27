@@ -57,10 +57,34 @@ public class MainActivity extends Activity {
 	}
 	
 	public void onOrderAutoClick(View view) {
-		Intent intent = new Intent(this, AutoBookActivity.class);
-		startActivity(intent);
+//		Intent intent = new Intent(this, AutoBookActivity.class);
+//		startActivity(intent);
+		Intent intent = new Intent(this, SelectTrainActivity.class);
+		intent.putExtra(SelectTrainActivity.INTENT_KEY_MODE, true);
+		startActivityForResult(intent, REQUEST_CODE_TRAIN_SELECTOR);
 	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		Intent intent = new Intent();
+		switch (requestCode) {
+		case REQUEST_CODE_TRAIN_SELECTOR:
+			if (resultCode == SelectTrainActivity.RESULT_SELECTED) {
+				intent.setClass(this, OrderFormActivity.class);
+				intent.putExtras(data);
+				intent.putExtra(OrderFormActivity.INTENT_KEY_FOR_TASK, true);
+				startActivity(intent);
+			}
+			break;
+		}
+		super.onActivityResult(requestCode, resultCode, data);
+	}
+
+
 
 	private TextView mWelcomePrompt;
 	
+	
+	public static final int REQUEST_CODE_TRAIN_SELECTOR = 101;
+
 }
